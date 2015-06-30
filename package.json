@@ -1,0 +1,37 @@
+{
+  "name": "hapi-route-builder",
+  "version": "0.1.0",
+  "homepage": "https://github.com/dbashford/hapi-route-builder",
+  "author": "David Bashford",
+  "description": "A fluid/builder pattern approach to building Hapi routes.",
+  "contributors": [
+    {
+      "name": "David Bashford",
+      "email": "dbashford@hotmail.com"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dbashford/hapi-route-builder"
+  },
+  "keywords": [
+    "hapi",
+    "routes",
+    "routing",
+    "fluid"
+  ],
+  "dependencies": {
+  },
+  "devDependencies": {
+    "mocha": "2.2.5",
+    "chai": "3.0.0"
+  },
+  "scripts": {
+    "test": "node_modules/.bin/mocha"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=0.10"
+  },
+  "main": "./src/index"
+}
