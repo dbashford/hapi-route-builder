@@ -154,12 +154,12 @@ RouteBuilder.prototype.applyDefaults = function() {
 
     RouteBuilder.defaultsArray.forEach(function(_default) {
       // if includes exist, only using it
-      if (_default.includes.length) {
-        if (utils.isIncluded(url, _default.includes)) {
-          _default.func(that);
+      if (_default.includes && _default.includes.length) {
+        if (utils.isIncluded(url, _default.includes || [])) {
+          _default(that);
         }
-      } else if (!utils.isExcluded(url, _default.excludes)) {
-        _default.func(that);
+      } else if (!utils.isExcluded(url, _default.excludes || [])) {
+        _default(that);
       }
     });
   }
