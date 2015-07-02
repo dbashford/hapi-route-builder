@@ -16,11 +16,6 @@ function RouteBuilder() {
  * Assembles list of config functions that can act
  * upon the config prior to output/print.
  */
-RouteBuilder.prototype.config = function(func) {
-  this.configs.push(func);
-  return this;
-};
-
 RouteBuilder.prototype.prepareConfig = function() {
   // execute all the configs functions
   this.applyDefaults();
@@ -39,6 +34,11 @@ RouteBuilder.prototype.print = function() {
   this.prepareConfig();
   var output = util.inspect(this.route);
   console.log(output);
+  return this;
+};
+
+RouteBuilder.prototype.config = function(func) {
+  this.configs.push(func);
   return this;
 };
 
@@ -86,6 +86,87 @@ RouteBuilder.prototype.options = function() {
 
 /* End Method related functions */
 
+RouteBuilder.prototype.url = function(url) {
+  this.route.path = url;
+  return this;
+};
+
+RouteBuilder.prototype.handler = function(handler) {
+  this.route.handler = handler;
+  return this;
+};
+
+/* Begin defaults functionality */
+
+RouteBuilder.defaultsArray = [];
+
+/**
+ * Allows adding a defaults object to the creating of route
+ * configurations
+ *
+ * @param {Defaults} defaults object
+ */
+RouteBuilder.addDefault = function(configDefault) {
+  RouteBuilder.defaultsArray.push(configDefault);
+};
+
+RouteBuilder.clearDefaults = function() {
+  this.defaultsArray = [];
+};
+
+RouteBuilder.prototype.applyDefaults = function() {
+  if (RouteBuilder.defaultsArray.length) {
+    var url = this.route.path
+      , that = this
+      ;
+
+    RouteBuilder.defaultsArray.forEach(function(_default) {
+      // if includes exist, only using it
+      if (_default.includes && _default.includes.length) {
+        if (utils.isIncluded(url, _default.includes || [])) {
+          (_default.func || _default)(that);
+        }
+      } else if (!utils.isExcluded(url, _default.excludes || [])) {
+        (_default.func || _default)(that);
+      }
+    });
+  }
+};
+
+/* end default functions */
+
+/* begin validate related functions */
+
+/**
+ * Will handle logging/response that an unexpected error has
+ * occurred and optionally handle replying to the client (500)
+ *
+ * @param request - the original hapi request
+ * @param reply - the original hapi reply
+ * @param {object} data - any pertinent data to be logged for the request
+ * that had the unexpected error
+ */
+
+/**
+ * Sets the entire payload validation object
+ * @param obj - The JSON object
+ */
+RouteBuilder.prototype.validatePayload = function(obj) {
+  utils.ensure(this.route, "config.validate");
+  this.route.config.validate.payload = obj;
+  return this;
+};
+
+RouteBuilder.prototype.validatePayloadKey = function(key, val) {
+  utils.ensure(this.route, "config.validate.payload");
+  this.route.config.validate.payload[key] = val;
+  return this;
+};
+
+/* end validate related functions */
+
+/* begin pre related functions */
+
 RouteBuilder.buildPre = function() {
   if (arguments.length === 1) {
     var arg = arguments[0];
@@ -127,87 +208,6 @@ RouteBuilder.buildPre = function() {
 
   throw new Error("buildPre called with bad set of arguments", arguments);
 };
-
-/* Begin defaults functionality */
-
-RouteBuilder.defaultsArray = [];
-
-/**
- * Allows adding a defaults object to the creating of route
- * configurations
- *
- * @param {Defaults} defaults object -
- */
-RouteBuilder.addDefault = function(configDefault) {
-  RouteBuilder.defaultsArray.push(configDefault);
-};
-
-RouteBuilder.clearDefaults = function() {
-  this.defaultsArray = [];
-};
-
-RouteBuilder.prototype.applyDefaults = function() {
-  if (RouteBuilder.defaultsArray.length) {
-    var url = this.route.url
-      , that = this
-      ;
-
-    RouteBuilder.defaultsArray.forEach(function(_default) {
-      // if includes exist, only using it
-      if (_default.includes && _default.includes.length) {
-        if (utils.isIncluded(url, _default.includes || [])) {
-          _default(that);
-        }
-      } else if (!utils.isExcluded(url, _default.excludes || [])) {
-        _default(that);
-      }
-    });
-  }
-};
-
-/* end default functions */
-
-RouteBuilder.prototype.url = function(url) {
-  this.route.path = url;
-  return this;
-};
-
-RouteBuilder.prototype.handler = function(handler) {
-  this.route.handler = handler;
-  return this;
-};
-
-/* begin validate related functions */
-
-/**
- * Will handle logging/response that an unexpected error has
- * occurred and optionally handle replying to the client (500)
- *
- * @param request - the original hapi request
- * @param reply - the original hapi reply
- * @param {object} data - any pertinent data to be logged for the request
- * that had the unexpected error
- */
-
-/**
- * Sets the entire payload validation object
- * @param obj - The JSON object
- */
-RouteBuilder.prototype.validatePayload = function(obj) {
-  utils.ensure(this.route, "config.validate");
-  this.route.config.validate.payload = obj;
-  return this;
-};
-
-RouteBuilder.prototype.validatePayloadKey = function(key, val) {
-  utils.ensure(this.route, "config.validate.payload");
-  this.route.config.validate.payload[key] = val;
-  return this;
-};
-
-/* end validate related functions */
-
-/* begin pre related functions */
 
 RouteBuilder.prototype.ensurePre = function(obj) {
   utils.ensure(this.route, "config.pre");

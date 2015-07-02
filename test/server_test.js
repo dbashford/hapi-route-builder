@@ -33,3 +33,33 @@ describe("routes with method will call handler", function() {
   test("patch");
   test("options");
 });
+
+var basicallyShitWorks = function(done) {
+  var url = "/api/test_url";
+  var config = new RouteBuilder().url(url).post().handler(function(request, reply) {
+    expect(true).to.be.true;
+    reply();
+  }).build();
+
+  new TestServer(config, done).andTest(function(request, stop) {
+    request
+      .post(url)
+      .send({foo:"bar"})
+      .end(function(err, res) {
+        stop();
+      });
+  });
+};
+
+describe("urls configured", function() {
+  it("will be reached", function(done) {
+    basicallyShitWorks(done);
+  });
+});
+
+describe("handlers configured", function() {
+  it("will be called", function(done) {
+    basicallyShitWorks(done);
+  });
+});
+

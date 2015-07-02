@@ -19,9 +19,10 @@ exports.ensure = function(obj, key) {
 };
 
 exports.isExcluded = exports.isIncluded = function(url, items) {
+
   for (var i = 0, iLen = items.length;  i < iLen; i++ ) {
     var item = items[i];
-    if (typeof exclude === "string") {
+    if (typeof item === "string") {
       if (url === item) {
         return true;
       }
