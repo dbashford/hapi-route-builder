@@ -209,13 +209,6 @@ RouteBuilder.buildPre = function() {
   throw new Error("buildPre called with bad set of arguments", arguments);
 };
 
-RouteBuilder.prototype.ensurePre = function(obj) {
-  utils.ensure(this.route, "config.pre");
-  if (utils.isObject(this.route.config.pre)) {
-    this.route.config.pre = [];
-  }
-};
-
 /**
  * Sets the entire pre block
  */
@@ -223,6 +216,16 @@ RouteBuilder.prototype.pre = function(pre) {
   utils.ensure(this.route, "config");
   this.route.config.pre = pre;
   return this;
+};
+
+/**
+ * Used to ensure pre block is in place before populating it
+ */
+RouteBuilder.prototype.ensurePre = function(obj) {
+  utils.ensure(this.route, "config.pre");
+  if (utils.isObject(this.route.config.pre)) {
+    this.route.config.pre = [];
+  }
 };
 
 /**

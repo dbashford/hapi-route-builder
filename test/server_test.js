@@ -99,3 +99,33 @@ describe("valiation", function() {
 
 });
 
+describe("pre", function() {
+
+  it("will be executed", function(done) {
+
+    var config = new RouteBuilder()
+      .url("/api/foo")
+      .get()
+      .pre([{
+        assign:"foo",
+        method: function(request, reply) {
+          reply("barrrrrr");
+        }
+      }])
+      .handler(function(request, reply) {
+        reply(request.pre.foo);
+      })
+      .build();
+
+    new TestServer(config, done).andTest(function(request, stop) {
+      request
+        .get("/api/foo")
+        .end(function(err, res) {
+          expect(res.text).to.eql("barrrrrr")
+          stop();
+        });
+    });
+  });
+
+});
+

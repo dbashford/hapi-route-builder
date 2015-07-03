@@ -264,6 +264,64 @@ describe("validate tests", function() {
     var config = new RouteBuilder().validatePayloadKey("name", validate).build();
     expect(config.config.validate.payload.name).to.eql(validate);
   });
+});
 
+describe("pre tests", function() {
+
+  describe("pre builder", function() {
+
+    it("0 arguments", function() {
+      var func = function(){
+        RouteBuilder.buildPre();
+      };
+      expect(func).to.throw(Error);
+    });
+
+
+    it("1 argument, array", function() {
+      var arr = ["foo", "bar"];
+      expect(RouteBuilder.buildPre(arr)).to.eql(arr);
+    });
+
+    it("1 argument, function", function() {
+      var func = function(){return "foo";};
+      expect(RouteBuilder.buildPre(func)).to.eql({method:func});
+    });
+
+    it("1 argument, string", function() {
+      expect(RouteBuilder.buildPre("foo")).to.eql("foo");
+    });
+
+    it("1 argument, object", function() {
+      expect(RouteBuilder.buildPre({bar:"foo"})).to.eql({bar:"foo"});
+    });
+
+    it("2 arguments", function() {
+      var func = function(){};
+      expect(
+        RouteBuilder.buildPre("foo", func))
+        .to.eql({assign:"foo", method:func});
+    });
+
+    it("3 arguments", function() {
+      var func = function(){};
+      expect(
+        RouteBuilder.buildPre("foo", func, "bar"))
+        .to.eql({assign:"foo", method:func, failAction:"bar"});
+    });
+
+    it("4 arguments", function() {
+      var func = function(){
+        RouteBuilder.buildPre("foo", "func", "bar", "baz")
+      };
+      expect(func).to.throw(Error);
+    });
+
+  });
+
+  it("pre config will be set whole", function() {
+    var config = new RouteBuilder().pre(["foo", "bar"]).build();
+    expect(config).to.eql({config: { pre:["foo", "bar"]}});
+  });
 
 });
