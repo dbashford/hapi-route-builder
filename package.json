@@ -26,7 +26,8 @@
     "mocha": "2.2.5",
     "chai": "3.0.0",
     "supertest": "1.0.1",
-    "hapi":"8.6.1"
+    "hapi":"8.6.1",
+    "joi":"6.4.3"
   },
   "scripts": {
     "test": "node_modules/.bin/mocha"

@@ -1,4 +1,5 @@
 var TestServer = new require("./util").TestServer
+  , Joi = require("joi")
   ;
 
 describe("routes with method will call handler", function() {
@@ -61,5 +62,40 @@ describe("handlers configured", function() {
   it("will be called", function(done) {
     basicallyShitWorks(done);
   });
+});
+
+describe("valiation", function() {
+  var test= function(done, func, payload) {
+    var builder = new RouteBuilder()
+      .url("/api/foo")
+      .post()
+
+    var config = builder[func].apply(builder, payload)
+      .handler(function(request, reply) {
+        reply();
+      })
+      .build();
+
+    new TestServer(config, done).andTest(function(request, stop) {
+      request
+       .post("/api/foo")
+       .send({name:5})
+       .end(function(err, res) {
+         expect(res.body.message).to.eql("child \"name\" fails because [\"name\" must be a string]");
+         expect(res.body.statusCode).to.eql(400)
+         stop();
+       });
+    });
+  };
+
+
+  it("will be executed via payload", function(done) {
+    test(done, "validatePayload", [{ name: Joi.string().required() }]);
+  });
+
+  it("will be executed via payload key", function(done){
+    test(done, "validatePayloadKey", ["name", Joi.string().required()]);
+  });
+
 });
 

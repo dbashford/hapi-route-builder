@@ -28,9 +28,9 @@ TestServer.prototype.runTest = function() {
   }
 };
 
-TestServer.prototype.stop = function() {
+TestServer.prototype.stop = function(err) {
   this.server.stop(function() {
-    this.done();
+    this.done(err);
   }.bind(this));
 };
 

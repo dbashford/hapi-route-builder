@@ -14,7 +14,7 @@ exports.ensure = function(obj, key) {
   if (keys.length === 0) {
     return;
   } else {
-    ensure(obj[firstKey], keys.join("."));
+    exports.ensure(obj[firstKey], keys.join("."));
   }
 };
 
