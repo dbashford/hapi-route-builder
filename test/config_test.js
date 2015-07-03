@@ -1,4 +1,5 @@
 var Joi = require("joi")
+  , noop = function(){};
   ;
 
 var assemblingOutputTests = function(outputType){
@@ -107,8 +108,7 @@ describe("url tests", function() {
 
 describe("handler tests", function() {
   it("will build a handler config", function() {
-    var handler = function(){};
-    expect(new RouteBuilder().handler(handler).build().handler).to.eql(handler);
+    expect(new RouteBuilder().handler(noop).build().handler).to.eql(noop);
   });
 });
 
@@ -268,15 +268,18 @@ describe("validate tests", function() {
 
 describe("pre tests", function() {
 
-  describe("pre builder", function() {
+  it("pre config will be set whole", function() {
+    var config = new RouteBuilder().pre(["foo", "bar"]).build();
+    expect(config).to.eql({config: { pre:["foo", "bar"]}});
+  });
 
+  describe("pre builder", function() {
     it("0 arguments", function() {
       var func = function(){
         RouteBuilder.buildPre();
       };
       expect(func).to.throw(Error);
     });
-
 
     it("1 argument, array", function() {
       var arr = ["foo", "bar"];
@@ -297,17 +300,11 @@ describe("pre tests", function() {
     });
 
     it("2 arguments", function() {
-      var func = function(){};
-      expect(
-        RouteBuilder.buildPre("foo", func))
-        .to.eql({assign:"foo", method:func});
+      expect(RouteBuilder.buildPre("foo", noop)).to.eql({assign:"foo", method:noop});
     });
 
     it("3 arguments", function() {
-      var func = function(){};
-      expect(
-        RouteBuilder.buildPre("foo", func, "bar"))
-        .to.eql({assign:"foo", method:func, failAction:"bar"});
+      expect(RouteBuilder.buildPre("foo", noop, "bar")).to.eql({assign:"foo", method:noop, failAction:"bar"});
     });
 
     it("4 arguments", function() {
@@ -316,12 +313,75 @@ describe("pre tests", function() {
       };
       expect(func).to.throw(Error);
     });
-
   });
 
-  it("pre config will be set whole", function() {
-    var config = new RouteBuilder().pre(["foo", "bar"]).build();
-    expect(config).to.eql({config: { pre:["foo", "bar"]}});
+  describe("serial pre", function() {
+    it("0 arguments", function() {
+      var func = function() {
+        new RouteBuilder().preSerial("name", validate).build();
+      }
+      expect(func).to.throw(Error);
+    });
+
+    it("1 argument, array", function() {
+      var arr = ["foo", "bar"];
+      var config = new RouteBuilder().preSerial(arr).build();
+      expect(config.config.pre).to.eql([arr]);
+    });
+
+    it("1 argument, function", function() {
+      var config = new RouteBuilder().preSerial(noop).build();
+      expect(config.config.pre).to.eql([{method:noop}]);
+    });
+
+    it("1 argument, string", function() {
+      var config = new RouteBuilder().preSerial("foo").build();
+      expect(config.config.pre).to.eql(["foo"]);
+    });
+
+    it("1 argument, object", function() {
+      var config = new RouteBuilder().preSerial({bar:"foo"}).build();
+      expect(config.config.pre).to.eql([{bar:"foo"}]);
+    });
+
+    it("2 arguments", function() {
+      var config = new RouteBuilder().preSerial("foo", noop).build();
+      expect(config.config.pre).to.eql([{assign:"foo", method:noop}]);
+    });
+
+    it("3 arguments", function() {
+      var config = new RouteBuilder().preSerial("foo", noop, "bar").build();
+      expect(config.config.pre).to.eql([{assign:"foo", method:noop, failAction:"bar"}]);
+    });
+
+    it("4 arguments", function() {
+      var func = function(){
+        new RouteBuilder().preSerial("foo", func, "bar", "baz").build();
+      };
+      expect(func).to.throw(Error);
+    });
+
+    it("can place the pre into the array at the correct place", function() {
+      var config = new RouteBuilder()
+        .preSerial("foo", noop)
+        .preSerial("bar", noop)
+        .preSerial(0, "baz", noop)
+        .build();
+
+      expect(config.config.pre[0].assign).to.eql("baz");
+      expect(config.config.pre[1].assign).to.eql("foo");
+      expect(config.config.pre[2].assign).to.eql("bar");
+
+      config = new RouteBuilder()
+        .preSerial("foo", noop)
+        .preSerial("bar", noop)
+        .preSerial(1, "baz", noop)
+        .build();
+
+      expect(config.config.pre[0].assign).to.eql("foo");
+      expect(config.config.pre[1].assign).to.eql("baz");
+      expect(config.config.pre[2].assign).to.eql("bar");
+    });
   });
 
 });

@@ -257,7 +257,7 @@ RouteBuilder.prototype.preSerial = function() {
 
   var pre = RouteBuilder.buildPre.apply(this, args);
 
-  if(index) {
+  if(index !== undefined) {
     this.route.config.pre.splice(index, 0, pre);
   } else {
     this.route.config.pre.push(pre);
