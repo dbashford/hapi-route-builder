@@ -318,7 +318,7 @@ describe("pre tests", function() {
   describe("serial pre", function() {
     it("0 arguments", function() {
       var func = function() {
-        new RouteBuilder().preSerial("name", validate).build();
+        new RouteBuilder().preSerial().build();
       }
       expect(func).to.throw(Error);
     });
@@ -381,6 +381,81 @@ describe("pre tests", function() {
       expect(config.config.pre[0].assign).to.eql("foo");
       expect(config.config.pre[1].assign).to.eql("baz");
       expect(config.config.pre[2].assign).to.eql("bar");
+    });
+  });
+
+  describe("parallel pre", function() {
+    it("0 arguments", function() {
+      var func = function() {
+        new RouteBuilder().preParallel().build();
+      }
+      expect(func).to.throw(Error);
+    });
+
+    it("1 argument, array with array", function() {
+      var arr = ["foo", "bar"];
+      var config = new RouteBuilder().preParallel([arr]).build();
+      expect(config.config.pre).to.eql([[arr]]);
+    });
+
+    it("1 argument, array with function", function() {
+      var config = new RouteBuilder().preParallel([noop]).build();
+      expect(config.config.pre).to.eql([[{method:noop}]]);
+    });
+
+    it("1 argument, array with string", function() {
+      var config = new RouteBuilder().preParallel(["foo"]).build();
+      expect(config.config.pre).to.eql([["foo"]]);
+    });
+
+    it("1 argument, array with object", function() {
+      var config = new RouteBuilder().preParallel([{bar:"foo"}]).build();
+      expect(config.config.pre).to.eql([[{bar:"foo"}]]);
+    });
+
+    it("2 argument array", function() {
+      var config = new RouteBuilder().preParallel(["foo", noop]).build();
+      expect(config.config.pre).to.eql([[{assign:"foo", method:noop}]]);
+    });
+
+    it("3 argument array", function() {
+      var config = new RouteBuilder().preParallel(["foo", noop, "bar"]).build();
+      expect(config.config.pre).to.eql([[{assign:"foo", method:noop, failAction:"bar"}]]);
+    });
+
+    it("4 argument array", function() {
+      var func = function(){
+        new RouteBuilder().preParallel(["foo", func, "bar", "baz"]).build();
+      };
+      expect(func).to.throw(Error);
+    });
+
+    it("multiple arrays", function() {
+      var config = new RouteBuilder().preParallel(
+        [noop], ["foo"], ["foo", noop]).build();
+      expect(config.config.pre).to.eql([[{method:noop}, "foo", {assign:"foo", method:noop}]]);
+    });
+
+    it("can place the pre into the array at the correct place", function() {
+      var config = new RouteBuilder()
+        .preParallel(["foo", noop])
+        .preParallel(["bar", noop])
+        .preParallel(0, ["baz", noop])
+        .build();
+
+      expect(config.config.pre[0][0].assign).to.eql("baz");
+      expect(config.config.pre[1][0].assign).to.eql("foo");
+      expect(config.config.pre[2][0].assign).to.eql("bar");
+
+      config = new RouteBuilder()
+        .preParallel(["foo", noop])
+        .preParallel(["bar", noop])
+        .preParallel(1, ["baz", noop])
+        .build();
+
+      expect(config.config.pre[0][0].assign).to.eql("foo");
+      expect(config.config.pre[1][0].assign).to.eql("baz");
+      expect(config.config.pre[2][0].assign).to.eql("bar");
     });
   });
 

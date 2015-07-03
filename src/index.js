@@ -247,6 +247,10 @@ RouteBuilder.prototype.ensurePre = function(obj) {
  * of the pre array
  */
 RouteBuilder.prototype.preSerial = function() {
+  if(arguments.length === 0) {
+    throw new Error("preSerial called with no arguments");
+  }
+
   this.ensurePre();
 
   var index
@@ -276,6 +280,11 @@ RouteBuilder.prototype.preSerial = function() {
  * of the pre array.
  */
 RouteBuilder.prototype.preParallel = function() {
+
+  if(arguments.length === 0) {
+    throw new Error("preParallel called with no arguments");
+  }
+
   this.ensurePre();
 
   var index
