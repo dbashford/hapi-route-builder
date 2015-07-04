@@ -211,8 +211,81 @@ describe("pre", function() {
     });
   });
 
+  var buildPreSerialTestConfig = function(pre) {
+    return new RouteBuilder()
+      .url("/api/foo")
+      .get()
+      .preSerial(pre)
+      .handler(handler)
+      .build();
+  };
 
-  // describe("serial");
-  // describe("parallel");
+  describe("serial", function() {
+    it("1 argument, array", function(done) {
+      var config = buildPreSerialTestConfig([{assign:"testVar", method:preFunc}])
+      test(done, config, true);
+    });
+
+    it("1 argument, function", function(done) {
+      var config = buildPreSerialTestConfig(preFunc);
+      test(done, config, false);
+    });
+
+    it("1 argument, object", function(done) {
+      var config = buildPreSerialTestConfig({assign:"testVar", method:preFunc})
+      test(done, config, true);
+    });
+
+    it("2 arguments", function(done) {
+      var config = new RouteBuilder()
+        .url("/api/foo")
+        .get()
+        .preSerial("testVar", preFunc)
+        .handler(handler)
+        .build();
+      test(done, config, true);
+    });
+
+    it("3 arguments", function(done) {
+      var preFunc = function(req, reply) {
+        called = true;
+        throw new Error("foo-bar");
+      };
+      var config = new RouteBuilder()
+        .url("/api/foo")
+        .get()
+        .preSerial("testVar", preFunc, "ignore")
+        .handler(handler)
+        .build();
+      test(done, config, true, '{"statusCode":500,"error":"Internal Server Error","message":"An internal server error occurred"}');
+    });
+
+    it("1 argument, string", function(done){
+      called = true;
+      var config = new RouteBuilder()
+        .url("/api/foo")
+        .get()
+        .preSerial("testVar(query.bar)")
+        .handler(handler)
+        .build();
+      test(done, config, true);
+    });
+
+    it("2 serials", function(done) {
+      var config = new RouteBuilder()
+        .url("/api/foo")
+        .get()
+        .preSerial("testVar", preFunc)
+        .preSerial("testVar", function(request, reply) {
+          reply(request.pre.testVar + "-baz");
+        })
+        .handler(handler)
+        .build();
+      test(done, config, true, "foo-bar-baz");
+    });
+
+  });
+
+  //describe("parallel");
 })
 
