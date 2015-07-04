@@ -157,7 +157,7 @@ describe("pre", function() {
   var test = function(done, config, testPre, matcher) {
     new TestServer(config, done).andTest(function(request, stop) {
       request
-        .get("/api/foo")
+        .get("/api/foo?bar=bar")
         .end(function(err, res) {
           if (testPre) {
             expect(res.text).to.eql(matcher || "foo-bar");
@@ -203,10 +203,15 @@ describe("pre", function() {
       test(done, config, true, '{"statusCode":500,"error":"Internal Server Error","message":"An internal server error occurred"}');
     });
 
-    it("1 argument, string");
+    it("1 argument, string", function(done){
+      called = true;
+      var pre = [RouteBuilder.buildPre("testVar(query.bar)")];
+      var config = buildPreTestConfig(pre)
+      test(done, config, true);
+    });
   });
 
-  
+
   // describe("serial");
   // describe("parallel");
 })

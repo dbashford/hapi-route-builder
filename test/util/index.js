@@ -2,10 +2,17 @@ var Hapi = require("hapi")
   , request = require('supertest')
   ;
 
+  var testVar = function (a, next) {
+    return next(null, "foo-" + a);
+  };
+
+
 function TestServer (routeConfig, done) {
   this.done = done;
 
   this.server = new Hapi.Server({debug:false});
+  this.server.method('testVar', testVar);
+
   this.server.connection({port: 3000});
   this.server.route(routeConfig);
 
