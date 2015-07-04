@@ -126,6 +126,66 @@ describe("pre", function() {
         });
     });
   });
-
 });
+
+describe("pre", function() {
+
+  var called = false;
+
+  beforeEach(function() {
+    called = false;
+  })
+
+  var preFunc = function(req, reply) {
+    called = true;
+    reply("foo-bar");
+  };
+
+  var handler = function(req, reply) {
+    reply(req.pre.testVar);
+  };
+
+  var buildPreTestConfig = function(pre) {
+    return new RouteBuilder()
+      .url("/api/foo")
+      .get()
+      .pre(pre)
+      .handler(handler)
+      .build();
+  };
+
+  var test = function(done, config, testPre) {
+    new TestServer(config, done).andTest(function(request, stop) {
+      request
+        .get("/api/foo")
+        .end(function(err, res) {
+          if (testPre) {
+            expect(res.text).to.eql("foo-bar");
+          }
+          expect(called).to.be.true;
+          stop();
+        });
+    });
+  };
+
+  describe("built direct", function() {
+    it("1 argument, array", function(done) {
+      var pre = RouteBuilder.buildPre([{assign:"testVar", method:preFunc}]);
+      var config = buildPreTestConfig(pre)
+      test(done, config, true);
+    });
+
+    it("1 argument, function", function(done) {
+      var pre = [RouteBuilder.buildPre(preFunc)];
+      var config = buildPreTestConfig(pre)
+      test(done, config, false);
+    });
+    it("1 argument, object");
+    it("2 arguments");
+    it("3 arguments");
+    it("1 argument, string");
+  });
+  // describe("serial");
+  // describe("parallel");
+})
 
