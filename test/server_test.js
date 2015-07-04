@@ -154,13 +154,13 @@ describe("pre", function() {
       .build();
   };
 
-  var test = function(done, config, testPre) {
+  var test = function(done, config, testPre, matcher) {
     new TestServer(config, done).andTest(function(request, stop) {
       request
         .get("/api/foo")
         .end(function(err, res) {
           if (testPre) {
-            expect(res.text).to.eql("foo-bar");
+            expect(res.text).to.eql(matcher || "foo-bar");
           }
           expect(called).to.be.true;
           stop();
@@ -180,11 +180,33 @@ describe("pre", function() {
       var config = buildPreTestConfig(pre)
       test(done, config, false);
     });
-    it("1 argument, object");
-    it("2 arguments");
-    it("3 arguments");
+
+    it("1 argument, object", function(done) {
+      var pre = [RouteBuilder.buildPre({assign:"testVar", method:preFunc})];
+      var config = buildPreTestConfig(pre)
+      test(done, config, true);
+    });
+
+    it("2 arguments", function(done) {
+      var pre = [RouteBuilder.buildPre("testVar", preFunc)];
+      var config = buildPreTestConfig(pre)
+      test(done, config, true);
+    });
+
+    it("3 arguments", function(done) {
+      var preFunc = function(req, reply) {
+        called = true;
+        throw new Error("foo-bar");
+      };
+      var pre = [RouteBuilder.buildPre("testVar", preFunc, "ignore")];
+      var config = buildPreTestConfig(pre)
+      test(done, config, true, '{"statusCode":500,"error":"Internal Server Error","message":"An internal server error occurred"}');
+    });
+
     it("1 argument, string");
   });
+
+  
   // describe("serial");
   // describe("parallel");
 })

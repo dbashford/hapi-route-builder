@@ -5,7 +5,7 @@ var Hapi = require("hapi")
 function TestServer (routeConfig, done) {
   this.done = done;
 
-  this.server = new Hapi.Server();
+  this.server = new Hapi.Server({debug:false});
   this.server.connection({port: 3000});
   this.server.route(routeConfig);
 
