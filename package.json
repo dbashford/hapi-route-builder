@@ -20,14 +20,16 @@
     "routing",
     "fluid"
   ],
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
-    "mocha": "2.2.5",
     "chai": "3.0.0",
-    "supertest": "1.0.1",
-    "hapi":"8.6.1",
-    "joi":"6.4.3"
+    "coveralls": "^2.11.2",
+    "hapi": "8.6.1",
+    "istanbul": "^0.3.17",
+    "joi": "6.4.3",
+    "mocha": "2.2.5",
+    "mocha-lcov-reporter": "0.0.2",
+    "supertest": "1.0.1"
   },
   "scripts": {
     "test": "node_modules/.bin/mocha"
