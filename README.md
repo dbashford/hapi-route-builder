@@ -162,8 +162,6 @@ Defaults are applied to a route when you call an output function (`build` or `pr
 
 ## RBDefault
 
-#### `RBDefault()`
-
+#### `constructor`
 #### `only`
-
 #### `not`
