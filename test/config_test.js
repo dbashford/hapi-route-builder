@@ -32,13 +32,6 @@ describe("building config", function() {
   assemblingOutputTests("build")
 });
 
-describe("printing config", function() {
-  afterEach(function() {
-    RouteBuilder.clearDefaults();
-  });
-  assemblingOutputTests("print")
-});
-
 describe("configs", function() {
   it("will be executed", function(done) {
     var count = 0;
@@ -276,40 +269,40 @@ describe("pre tests", function() {
   describe("pre builder", function() {
     it("0 arguments", function() {
       var func = function(){
-        RouteBuilder.buildPre();
+        RouteBuilder._buildPre();
       };
       expect(func).to.throw(Error);
     });
 
     it("1 argument, array", function() {
       var arr = ["foo", "bar"];
-      expect(RouteBuilder.buildPre(arr)).to.eql(arr);
+      expect(RouteBuilder._buildPre(arr)).to.eql(arr);
     });
 
     it("1 argument, function", function() {
       var func = function(){return "foo";};
-      expect(RouteBuilder.buildPre(func)).to.eql({method:func});
+      expect(RouteBuilder._buildPre(func)).to.eql({method:func});
     });
 
     it("1 argument, string", function() {
-      expect(RouteBuilder.buildPre("foo")).to.eql("foo");
+      expect(RouteBuilder._buildPre("foo")).to.eql("foo");
     });
 
     it("1 argument, object", function() {
-      expect(RouteBuilder.buildPre({bar:"foo"})).to.eql({bar:"foo"});
+      expect(RouteBuilder._buildPre({bar:"foo"})).to.eql({bar:"foo"});
     });
 
     it("2 arguments", function() {
-      expect(RouteBuilder.buildPre("foo", noop)).to.eql({assign:"foo", method:noop});
+      expect(RouteBuilder._buildPre("foo", noop)).to.eql({assign:"foo", method:noop});
     });
 
     it("3 arguments", function() {
-      expect(RouteBuilder.buildPre("foo", noop, "bar")).to.eql({assign:"foo", method:noop, failAction:"bar"});
+      expect(RouteBuilder._buildPre("foo", noop, "bar")).to.eql({assign:"foo", method:noop, failAction:"bar"});
     });
 
     it("4 arguments", function() {
       var func = function(){
-        RouteBuilder.buildPre("foo", "func", "bar", "baz")
+        RouteBuilder._buildPre("foo", "func", "bar", "baz")
       };
       expect(func).to.throw(Error);
     });

@@ -101,9 +101,9 @@ var RouteBuilder =  hrb.RouteBuilder;
 var RBDefault = hrb.RBDefault;
 ```
 
-# `RouteBuilder`
+## `RouteBuilder`
 
-Use the RouteBuilder by instantiating a new instance and then chaining its methods. Calling the `build` function will return the Hapi route configuration object.
+Use the RouteBuilder by instantiating a new instance and then chaining its functions. Calling the `build` function will return the Hapi route configuration object.
 
 ```javascript
 var config =
@@ -113,7 +113,7 @@ var config =
     .build();
 ```
 
-# `RBDefault`
+## `RBDefault`
 
 To utilize default configuration across routes instantiate an `RBDefault`.  It takes as part of its constructor a function that takes a `RouteBuilder` instance.  You can then chain any of the `RouteBuilder` functions.
 
@@ -132,10 +132,38 @@ Defaults are applied to a route when you call an output function (`build` or `pr
 
 # API
 
-## Configuration creation methods
+## RouteBuilder
 
-## Defaults
+#### `constructor`
 
-## Output methods
+#### `RouteBuilder.addDefault`
+#### `RouteBuilder.clearDefaults`
 
-The following functions create the configuration and output it.
+#### `method`
+#### `post`
+#### `get`
+#### `put`
+#### `delete`
+#### `patch`
+#### `options`
+
+#### `url`
+
+#### `handler`
+
+#### `validatePayload`
+#### `validatePayloadKey`
+
+#### `pre`
+#### `preSerial`
+#### `preParallel`
+
+#### `build`
+
+## RBDefault
+
+#### `RBDefault()`
+
+#### `only`
+
+#### `not`

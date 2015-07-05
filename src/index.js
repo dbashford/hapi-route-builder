@@ -12,29 +12,13 @@ function RouteBuilder() {
 
 /* output functions */
 
-/**
- * Assembles list of config functions that can act
- * upon the config prior to output/print.
- */
-RouteBuilder.prototype.prepareConfig = function() {
-  // execute all the configs functions
-  this.applyDefaults();
+RouteBuilder.prototype.build = function() {
+  this._applyDefaults();
   var that = this;
   this.configs.forEach(function(func) {
     func(that.route);
   });
-};
-
-RouteBuilder.prototype.build = function() {
-  this.prepareConfig();
   return this.route;
-};
-
-RouteBuilder.prototype.print = function() {
-  this.prepareConfig();
-  var output = util.inspect(this.route);
-  console.log(output);
-  return this;
 };
 
 RouteBuilder.prototype.config = function(func) {
@@ -114,7 +98,7 @@ RouteBuilder.clearDefaults = function() {
   this.defaultsArray = [];
 };
 
-RouteBuilder.prototype.applyDefaults = function() {
+RouteBuilder.prototype._applyDefaults = function() {
   if (RouteBuilder.defaultsArray.length) {
     var url = this.route.path
       , that = this
@@ -167,7 +151,7 @@ RouteBuilder.prototype.validatePayloadKey = function(key, val) {
 
 /* begin pre related functions */
 
-RouteBuilder.buildPre = function() {
+RouteBuilder._buildPre = function() {
   if (arguments.length === 1) {
     var arg = arguments[0];
 
@@ -206,7 +190,7 @@ RouteBuilder.buildPre = function() {
     };
   }
 
-  throw new Error("buildPre called with bad set of arguments", arguments);
+  throw new Error("_buildPre called with bad set of arguments", arguments);
 };
 
 /**
@@ -221,7 +205,7 @@ RouteBuilder.prototype.pre = function(pre) {
 /**
  * Used to ensure pre block is in place before populating it
  */
-RouteBuilder.prototype.ensurePre = function(obj) {
+RouteBuilder.prototype._ensurePre = function(obj) {
   utils.ensure(this.route, "config.pre");
   if (utils.isObject(this.route.config.pre)) {
     this.route.config.pre = [];
@@ -251,7 +235,7 @@ RouteBuilder.prototype.preSerial = function() {
     throw new Error("preSerial called with no arguments");
   }
 
-  this.ensurePre();
+  this._ensurePre();
 
   var index
     , args = Array.prototype.slice.call(arguments);
@@ -259,7 +243,7 @@ RouteBuilder.prototype.preSerial = function() {
     index = args.shift();
   }
 
-  var pre = RouteBuilder.buildPre.apply(this, args);
+  var pre = RouteBuilder._buildPre.apply(this, args);
 
   if(index !== undefined) {
     this.route.config.pre.splice(index, 0, pre);
@@ -285,7 +269,7 @@ RouteBuilder.prototype.preParallel = function() {
     throw new Error("preParallel called with no arguments");
   }
 
-  this.ensurePre();
+  this._ensurePre();
 
   var index
     , args = Array.prototype.slice.call(arguments);
@@ -295,7 +279,7 @@ RouteBuilder.prototype.preParallel = function() {
 
   var pres = [];
   for (var i = 0, argLen = args.length; i < argLen; i++) {
-    var pre = RouteBuilder.buildPre.apply(this, args[i]);
+    var pre = RouteBuilder._buildPre.apply(this, args[i]);
     pres.push(pre);
   }
 

@@ -170,25 +170,25 @@ describe("pre", function() {
 
   describe("built direct", function() {
     it("1 argument, array", function(done) {
-      var pre = RouteBuilder.buildPre([{assign:"testVar", method:preFunc}]);
+      var pre = RouteBuilder._buildPre([{assign:"testVar", method:preFunc}]);
       var config = buildPreTestConfig(pre)
       test(done, config, true);
     });
 
     it("1 argument, function", function(done) {
-      var pre = [RouteBuilder.buildPre(preFunc)];
+      var pre = [RouteBuilder._buildPre(preFunc)];
       var config = buildPreTestConfig(pre)
       test(done, config, false);
     });
 
     it("1 argument, object", function(done) {
-      var pre = [RouteBuilder.buildPre({assign:"testVar", method:preFunc})];
+      var pre = [RouteBuilder._buildPre({assign:"testVar", method:preFunc})];
       var config = buildPreTestConfig(pre)
       test(done, config, true);
     });
 
     it("2 arguments", function(done) {
-      var pre = [RouteBuilder.buildPre("testVar", preFunc)];
+      var pre = [RouteBuilder._buildPre("testVar", preFunc)];
       var config = buildPreTestConfig(pre)
       test(done, config, true);
     });
@@ -198,14 +198,14 @@ describe("pre", function() {
         called = true;
         throw new Error("foo-bar");
       };
-      var pre = [RouteBuilder.buildPre("testVar", preFunc, "ignore")];
+      var pre = [RouteBuilder._buildPre("testVar", preFunc, "ignore")];
       var config = buildPreTestConfig(pre)
       test(done, config, true, '{"statusCode":500,"error":"Internal Server Error","message":"An internal server error occurred"}');
     });
 
     it("1 argument, string", function(done){
       called = true;
-      var pre = [RouteBuilder.buildPre("testVar(query.bar)")];
+      var pre = [RouteBuilder._buildPre("testVar(query.bar)")];
       var config = buildPreTestConfig(pre)
       test(done, config, true);
     });
