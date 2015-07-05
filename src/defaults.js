@@ -4,13 +4,13 @@
  * @param func - The defaults function that is called when the configuration
  *   is created.  That function is passed the RouteBuilder instance.
  */
-function RBDefaults(func) {
+function RBDefault(func) {
   this.func = func;
   this.excludes = [];
   this.includes = [];
 }
 
-RBDefaults.prototype.not = function(exclude) {
+RBDefault.prototype.not = function(exclude) {
   if (this.includes.length) {
     throw new Error("Used only and not on same default, this is not allowed");
   }
@@ -18,7 +18,7 @@ RBDefaults.prototype.not = function(exclude) {
   return this;
 };
 
-RBDefaults.prototype.only = function(include) {
+RBDefault.prototype.only = function(include) {
   if (this.excludes.length) {
     throw new Error("Used only and not on same default, this is not allowed");
   }
@@ -26,4 +26,4 @@ RBDefaults.prototype.only = function(include) {
   return this;
 };
 
-module.exports = RBDefaults;
+module.exports = RBDefault;

@@ -1,6 +1,6 @@
 var util = require("util")
   , utils = require("./utils")
-  , RBDefaults = require("./defaults")
+  , RBDefault = require("./defaults")
   , acceptableMethods = ["PUT", "POST", "DELETE", "GET", "OPTIONS", "PATCH"]
   ;
 
@@ -311,5 +311,5 @@ RouteBuilder.prototype.preParallel = function() {
 /* end pre related functions */
 
 exports.RouteBuilder = RouteBuilder;
-exports.RBDefaults = RBDefaults;
+exports.RBDefault = RBDefault;
 

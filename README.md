@@ -60,14 +60,14 @@ server.route(config);
 
 This cuts 24 lines down to 10 (with a few extra lines tossed in for readability), while making some of what Hapi is doing more clear, rather than implied via the object structure.  For instance, `preParallel`, which takes n Arrays as input, executes each of the items it is passed in parallel.
 
-### Defaults
+### With Defaults
 
 Using the example above, imagine that for every call to `/foo/{foo_id}/bar` that you needed to load user and context data into the request before making a judgement regarding whether or not the user is allowed to access the `bar` resource.
 
 Using defaults you could define that behavior across all the `/foo/{foo_id}/bar` routes using the same `pre` config.
 
 ```javascript
-var def = new RBDefaults(function(rb) {
+var def = new RBDefault(function(rb) {
   rb.preParallel(["userData", shared.loadUserData], ["contextData", shared.loadFooData])
     .preSerial(shared.authorizeForCreate)
 }).only("/foo/{foo_id}/bar");
@@ -98,12 +98,12 @@ But the output is the same.
 ```javascript
 var hrb = require("hapi-route-builder");
 var RouteBuilder =  hrb.RouteBuilder;
-var RBDefaults = hrb.RBDefaults;
+var RBDefault = hrb.RBDefault;
 ```
 
 # `RouteBuilder`
 
-You use the RouteBuilder by instantiating a new instance and then chaining its methods. Calling the `build` function will return the Hapi route configuration object.
+Use the RouteBuilder by instantiating a new instance and then chaining its methods. Calling the `build` function will return the Hapi route configuration object.
 
 ```javascript
 var config =
@@ -113,7 +113,22 @@ var config =
     .build();
 ```
 
-# `RBDefaults`
+# `RBDefault`
+
+To utilize default configuration across routes instantiate an `RBDefault`.  It takes as part of its constructor a function that takes a `RouteBuilder` instance.  You can then chain any of the `RouteBuilder` functions.
+
+Add the `RBDefault` instance to the RouteBuilder staticly using `RouteBuilder.addDefault`.
+
+```javascript
+var def = new RBDefault(function(rb) {
+  rb.preParallel(["userData", shared.loadUserData], ["contextData", shared.loadFooData])
+    .preSerial(shared.authorizeForCreate)
+}).only("/foo/{foo_id}/bar");
+
+RouteBuilder.addDefault(def);
+```
+
+Defaults are applied to a route when you call an output function (`build` or `print` for instance).  That is important to keep in mind for those `RouteBuilder` functions for which call order matters.  A call to `preSerial` as part of a RBDefault will result in that added `pre` being the last in the `pre` array.  The `preSerial` function takes an optional `index` parameter to handle this case.
 
 # API
 

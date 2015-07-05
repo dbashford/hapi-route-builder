@@ -130,7 +130,7 @@ describe("defaults", function() {
     });
 
     it("when added as RBDefault", function(done) {
-      RouteBuilder.addDefault(new RBDefaults(function(rb) {
+      RouteBuilder.addDefault(new RBDefault(function(rb) {
         // will time out if not called
         expect(true).to.be.true;
         done();
@@ -147,7 +147,7 @@ describe("defaults", function() {
   });
 
   it("can be added as RBDefault", function() {
-    RouteBuilder.addDefault(new RBDefaults(function(rb) {}));
+    RouteBuilder.addDefault(new RBDefault(function(rb) {}));
     expect(RouteBuilder.defaultsArray.length).to.eql(1);
   });
 
@@ -160,7 +160,7 @@ describe("defaults", function() {
 
   var withNot = function(type, called, matcher, matcher2) {
     it("when url is excluded via " + type, function(done) {
-      var def = new RBDefaults(function(rb) {
+      var def = new RBDefault(function(rb) {
         expect(called).to.be.true;
         if (called) {
           done();
@@ -182,7 +182,7 @@ describe("defaults", function() {
 
   var withOnly = function(type, called, matcher, matcher2) {
     it("when url is included via " + type, function(done) {
-      var def = new RBDefaults(function(rb) {
+      var def = new RBDefault(function(rb) {
         expect(called).to.be.true;
         if (called) {
           done();
@@ -232,7 +232,7 @@ describe("defaults", function() {
   describe("will throw", function() {
     it("if only called after not", function(done) {
       try {
-        new RBDefaults(function(rb) {}).not("foo").only("bar");
+        new RBDefault(function(rb) {}).not("foo").only("bar");
       } catch(err) {
         expect(err.message).to.eql("Used only and not on same default, this is not allowed");
         done();
@@ -241,7 +241,7 @@ describe("defaults", function() {
 
     it("if not called after only", function(done) {
       try {
-        new RBDefaults(function(rb) {}).only("bar").not("foo");
+        new RBDefault(function(rb) {}).only("bar").not("foo");
       } catch(err) {
         expect(err.message).to.eql("Used only and not on same default, this is not allowed");
         done();

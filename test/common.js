@@ -1,3 +1,3 @@
 global.expect = require('chai').expect;
-global.RBDefaults = require("../src").RBDefaults;
+global.RBDefault = require("../src").RBDefault;
 global.RouteBuilder = require("../src").RouteBuilder;
