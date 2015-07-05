@@ -1,5 +1,5 @@
-var utils = require("../utils")
-  , RouteBuilder = require("../route_builder");
+var RouteBuilder = require("../route_builder")
+  , utils = require("../utils")
   ;
 
 /**
