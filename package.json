@@ -37,6 +37,5 @@
   "license": "MIT",
   "engines": {
     "node": ">=0.10"
-  },
-  "main": "./src/index"
+  }
 }
