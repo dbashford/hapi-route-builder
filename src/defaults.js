@@ -1,3 +1,6 @@
+var utils = require("./utils")
+  ;
+
 /**
  * Creates a Defaults object using the function passed in.
  *
