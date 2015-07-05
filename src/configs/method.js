@@ -1,5 +1,5 @@
 var acceptableMethods = ["PUT", "POST", "DELETE", "GET", "OPTIONS", "PATCH"]
-  , RouteBuilder = require("./route_builder")
+  , RouteBuilder = require("../route_builder")
   ;
 
 RouteBuilder.prototype.method = function(method) {

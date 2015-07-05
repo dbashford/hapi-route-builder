@@ -3,8 +3,8 @@ require("./src/configs/misc");
 require("./src/configs/pre");
 require("./src/configs/validate");
 
-var RouteBuilder = require("./src/configs/route_builder")
-  , RBDefault = require("./src/defaults")
+var RouteBuilder = require("./src/route_builder")
+  , RBDefault = require("./src/rb_defaults")
   ;
 
 exports.RouteBuilder = RouteBuilder;
