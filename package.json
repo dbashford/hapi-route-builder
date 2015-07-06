@@ -20,7 +20,9 @@
     "routing",
     "fluid"
   ],
-  "dependencies": {},
+  "dependencies": {
+    "traverse":"0.6.6"
+  },
   "devDependencies": {
     "chai": "3.0.0",
     "coveralls": "^2.11.2",
