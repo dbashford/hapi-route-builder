@@ -134,34 +134,262 @@ Defaults are applied to a route when you call an output function (`build` or `pr
 
 ## RouteBuilder
 
+For details about the config being set up by the RouteBuilder, check the hapi route documentation for [route configuration](http://hapijs.com/api#route-configuration) and [additional route options](http://hapijs.com/api#route-options).
+
 #### `constructor`
+The RouteBuilder constructor is the first call that begins the fluid API chain.
+
+```javascript
+new RouteBuilder()
+```
 
 #### `RouteBuilder.addDefault`
+This static function adds defaults to all RouteBuilder instances.  This function can take either a `RBDefault` object or a plain function that takes an instance of RouteBuilder as input.
+
+```javascript
+RouteBuilder.addDefault(new RBDefault(function(rb){
+  rb.post(); // this would make all routes POSTs, here as short example only
+}));
+```
+
+or
+
+```javascript
+RouteBuilder.addDefault(function(rb){
+  rb.post(); // this would make all routes POSTs, here as short example only
+});
+```
+
+The first form, using an RBDefault, has the benefit of being able to chain calls to `only` or `not` to be specific about what routes to apply the default too.
+
 #### `RouteBuilder.clearDefaults`
+This static function clears all defaults out of the RouteBuilder so future routes do not contain any configured defaults.  Important to note that this does not effect any routes created prior to clearing the defaults.
+
+This function is handy for clearing defaults after creating a group of routes, prior to adding new defaults for another group.
+
+```javascript
+RouteBuilder.clearDefaults();
+```
 
 #### `method`
+This function configures a Hapi route's `method` parameter. It takes a string, normally one of 'GET', 'POST', 'PUT', 'PATCH', 'DELETE', or 'OPTIONS'.  The convenience functions below are terser ways to express an HTTP method.
+
+```javascript
+new RouteBuilder().method('POST')
+```
+
 #### `post`
+Expresses a route is a POST.
+
+```javascript
+new RouteBuilder().post()
+```
+
 #### `get`
+Expresses a route is a GET.
+
+```javascript
+new RouteBuilder().get()
+```
+
 #### `put`
+Expresses a route is a PUT.
+
+```javascript
+new RouteBuilder().put()
+```
+
 #### `delete`
+Expresses a route is a DELETE.
+
+```javascript
+new RouteBuilder().delete()
+```
+
 #### `patch`
+Expresses a route is a PATCH.
+
+```javascript
+new RouteBuilder().patch()
+```
+
 #### `options`
+Expresses a route is an OPTIONS.
+
+```javascript
+new RouteBuilder().options()
+```
 
 #### `url`
+Sets the `path` property for a Hapi route.
+
+```javascript
+new RouteBuilder().url("/foo/{foo_id}/bar/{bar_id}/")
+```
 
 #### `handler`
+Sets the `handler` property for a Hapi route.
+
+```javascript
+new RouteBuilder().handler(function(request, reply) {
+  reply();
+});
+```
 
 #### `validatePayload`
+Sets the `config.validate` property of a route configuration.
+
+```javascript
+var validate = {
+  ids: Joi.array().items(
+    Joi.string().required()
+  ).required()
+};
+new RouteBuilder().validatePayload(validate);
+```
+
 #### `validatePayloadKey`
+A convenience function to set a specific `config.validate.payload` key.
+
+```javascript
+var validate = Joi.array().items(
+    Joi.string().required()
+  ).required();
+new RouteBuilder().validatePayload("ids", validate);
+```
 
 #### `pre`
+Sets the entire [`pre`](http://hapijs.com/api#route-prerequisites) config.
+
+```javascript
+var pre = [
+  [
+    {
+      assign: "foo",
+      method: fooFunc
+    },
+    {
+      assign: "bar",
+      method: barFunc
+    }
+  ],
+  bazFunction
+]
+
+new RouteBuilder().pre(pre);
+```
+
 #### `preSerial`
+Hapi's `pre` configuration is an array. `preSerial` pushes a new entry to that array.  `preSerial` can be called multiple times, adding more entries to the `pre` array.
+
+`preSerial` can take all of the 3 types of inputs that Hapi's [`pre` config](http://hapijs.com/api#route-prerequisites) can take: 1) an object with keys of `assign`, `method`, and `failAction`, 2) a function (same as just providing a `method` and 3) a string which invokes a `server.method`.
+
+```javascript
+new RouteBuilder()
+  .preSerial({assign:"foo", method:fooFunc})
+  .preSerial(barFunc)
+  .preSerial("serverMethod(params.id)")
+```
+
+`preSerial` has two alternative convenience signatures. `preSerial` called be called with two parameters for `assign` and `method`, and with three paramters for `assign`, `method`, and `failAction`.
+
+```javascript
+new RouteBuilder()
+  .preSerial("foo", fooFunc)
+  .preSerial("bar", barFunc, "ignore")
+```
+
+All argument signatures have a variation that takes an `index` integer as the first parameter.  This allows for placing the `preSerial` to be placed into a specific position in the `pre` array rather than pushed to the end.
+
+```javascript
+new RouteBuilder()
+  .preSerial("foo", fooFunc)
+  .preSerial(0, "bar", barFunc, "ignore")
+```
+
+Add `0` in the example above would, in this case, reverse the order of the two `preSerial`s.
+
 #### `preParallel`
+`preParallel` works like `preSerial` except it takes multiple arrays of `preSerial` inputs. Each array represents a `pre` to execute in parallel with the other arrays of inputs.
+
+```javascript
+new RouteBuilder()
+  .preParallel(
+    ["foo", fooFunc],
+    ["bar", barFunc]
+  )
+  .preSerial("baz", bazFunc)
+```
+
+The above would execute `fooFunc` and `barFunc` in parallel, and after both are finished, execute `bazFunc`.
+
+All the `preSerial` input variations are honored, including using an `index` integer.
+
+```javascript
+new RouteBuilder()
+  .preSerial("baz", bazFunc)
+  .preParallel(
+    0,
+    ["foo", fooFunc],
+    ["bar", barFunc]
+  )
+```
 
 #### `build`
+Creates a configuration object and returns it.  When `build` is called is also when any defaults are applied.
+
+```javascript
+new RouteBuilder()
+  .post()
+  .url("/api/foo")
+  .handler(function(request, reply) {
+    reply("foo");
+  })
+  .build();
+```
 
 ## RBDefault
 
 #### `constructor`
+The `RBDefault` constructor takes a function as a parameter.  The function should take an instance of `RouteBuilder` as input.  Inside the function the RouteBuilder instance should be used to apply configuration to be used across all routes.
+
+The `RBDefault` instance is then passed to `RouteBuilder.addDefault`.
+
+```javascript
+RouteBuilder.addDefault(
+  new RBDefault(function(rb) {
+    rb.preSerial("auth", authFunction)
+  });
+);
+```
+
 #### `only`
+`only` can be chained onto a `RBDefault` instance and allows for a default to be scoped to certain routes.  `only` can take a RegExp or a string, each of which is used to match any routes the RBDefault may be applied to.
+
+`only` itself can be chained.
+
+```javascript
+RouteBuilder.addDefault(
+  new RBDefault(function(rb) {
+    rb.preSerial("auth", authFunction)
+  }).only(/account/).only("/logout");
+);
+```
+
+`only` cannot be used with `not`.
+
 #### `not`
+`not` can be chained onto a `RBDefault` instance and allows for specific routes to be eliminated from having the default applied. `not` can take a RegExp or a string, each of which is used to eliminate routes from having the RBDefault applied.
+
+`not` itself can be chained.
+
+```javascript
+RouteBuilder.addDefault(
+  new RBDefault(function(rb) {
+    rb.preSerial("auth", authFunction)
+  }).not(/profile/).not("/login");
+);
+```
+
+`not` cannot be used with `only`.
+
