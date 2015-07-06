@@ -3,15 +3,6 @@ var Joi = require("joi")
   ;
 
 var assemblingOutputTests = function(outputType){
-  it("runs config entries", function(done) {
-    new RouteBuilder()
-      .method("POST")
-      .config(function() {
-        // will time out if it fails.
-        expect(true).to.be.true;
-        done()
-      })[outputType]();
-  });
 
   it("applies defaults", function(done) {
     RouteBuilder.addDefault(function(rb) {
@@ -30,27 +21,6 @@ describe("building config", function() {
     RouteBuilder.clearDefaults();
   });
   assemblingOutputTests("build")
-});
-
-describe("configs", function() {
-  it("will be executed", function(done) {
-    var count = 0;
-    var executed = function() {
-      if (++count === 2) {
-        expect(true).to.be.true;
-        done();
-      }
-    };
-
-    new RouteBuilder()
-      .config(function() {
-        executed();
-      })
-      .config(function() {
-        executed();
-      })
-      .build();
-  });
 });
 
 describe("method tests", function() {

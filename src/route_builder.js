@@ -2,7 +2,6 @@ var utils = require("./utils");
 
 function RouteBuilder() {
   this.route = {};
-  this.configs = [];
   this.defaults = [];
 }
 
@@ -43,16 +42,7 @@ RouteBuilder.prototype._applyDefaults = function() {
 
 RouteBuilder.prototype.build = function() {
   this._applyDefaults();
-  var that = this;
-  this.configs.forEach(function(func) {
-    func(that.route);
-  });
   return this.route;
-};
-
-RouteBuilder.prototype.config = function(func) {
-  this.configs.push(func);
-  return this;
 };
 
 module.exports = RouteBuilder;
