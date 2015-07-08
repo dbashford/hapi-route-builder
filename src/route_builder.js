@@ -1,8 +1,11 @@
-var utils = require("./utils");
+var utils = require("./utils")
+  , traverse = require('traverse')
+  , replaceCheck = /^%.*%$/
+  ;
 
 function RouteBuilder() {
   this.route = {};
-  this.defaults = [];
+  this.replaces = [];
 }
 
 RouteBuilder.defaultsArray = [];
@@ -40,8 +43,47 @@ RouteBuilder.prototype._applyDefaults = function() {
   }
 };
 
+var findReplaceValue = function(replacers, key) {
+  for (var i = 0, iLen = replacers.length; i < iLen; i++) {
+    var r = replacers[i];
+    if (JSON.stringify(r.key) === key) {
+      return r.val;
+    }
+  }
+};
+
+RouteBuilder.prototype._applyReplaces = function() {
+  var that = this;
+  var replaceMatchers = this.replaces.map(function(replacer) {
+    return JSON.stringify(replacer.key);
+  });
+  if (replaceMatchers && replaceMatchers.length) {
+    traverse(this.route).forEach(function (x) {
+      x = JSON.stringify(x);
+      if(replaceMatchers.indexOf(x) > -1) {
+        this.update(findReplaceValue(that.replaces, x));
+      }
+    });
+  }
+};
+
+RouteBuilder.prototype._checkForcedReplaces = function() {
+  traverse(this.route).forEach(function (x) {
+    if (typeof x === "string" && replaceCheck.test(x)) {
+      throw new Error("String " + x + " not replaced in the configuration.");
+    }
+  });
+};
+
+RouteBuilder.prototype.replace = function(key, val) {
+  this.replaces.push({key:key, val:val});
+  return this;
+};
+
 RouteBuilder.prototype.build = function() {
   this._applyDefaults();
+  this._applyReplaces();
+  this._checkForcedReplaces();
   return this.route;
 };
 
