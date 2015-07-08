@@ -70,7 +70,9 @@ Using defaults you could define that behavior across all the `/foo/{foo_id}/bar`
 var def = new RBDefault(function(rb) {
   rb.preParallel(["userData", shared.loadUserData], ["contextData", shared.loadFooData])
     .preSerial(shared.authorizeForCreate)
-}).only("/foo/{foo_id}/bar");
+  })
+  .applyAtBuild()
+  .only("/foo/{foo_id}/bar");
 
 RouteBuilder.addDefault(def);
 ```
@@ -123,9 +125,11 @@ Add the `RBDefault` instance to the RouteBuilder staticly using `RouteBuilder.ad
 
 ```javascript
 var def = new RBDefault(function(rb) {
-  rb.preParallel(["userData", shared.loadUserData], ["contextData", shared.loadFooData])
-    .preSerial(shared.authorizeForCreate)
-}).only("/foo/{foo_id}/bar");
+    rb.preParallel(["userData", shared.loadUserData], ["contextData", shared.loadFooData])
+      .preSerial(shared.authorizeForCreate)
+  })
+  .applyAtBuild()
+  .only("/foo/{foo_id}/bar");
 
 RouteBuilder.addDefault(def);
 ```
