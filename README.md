@@ -2,9 +2,9 @@
 [![Coverage Status](https://coveralls.io/repos/dbashford/hapi-route-builder/badge.svg?branch=master)](https://coveralls.io/r/dbashford/hapi-route-builder?branch=master)
 # Overview
 
-hapi-route-builder is a library for building routes in [Hapi](http://hapijs.com/). The goal of this library is to allow for dynamic and terse route building while isolating your application's routes from possible breakages when updating Hapi versions.
+hapi-route-builder is a library for building routes in [Hapi](http://hapijs.com/). The goal of this library is to allow for dynamic and terse route building while isolating an application's routes from possible breakages when updating Hapi versions.
 
-hapi-route-builder uses the [Builder Pattern](https://en.wikipedia.org/wiki/Builder_pattern) to create route configuration. The library's [fluent API](https://en.wikipedia.org/wiki/Fluent_interface#JavaScript) makes your route configuration readable.
+hapi-route-builder uses the [Builder Pattern](https://en.wikipedia.org/wiki/Builder_pattern) to create route configuration. The library's [fluent API](https://en.wikipedia.org/wiki/Fluent_interface#JavaScript) makes route configuration readable.
 
 To help reduce duplication in the configuration the library includes the ability to set default configuration and to constrain those defaults to certain routes or route patterns.
 
@@ -40,7 +40,7 @@ server.route({
 });
 ```
 
-Here we have a simple POST route which creates a `bar` resource.  It includes some validation for some payload data.  It also includes `pre` processing which retrieves, in parallel, some user data and some information about the parent `foo` resource before ensuring the user has the ability to create the given resource.
+Here is a simple POST route which creates a `bar` resource.  It includes some validation for some payload data.  It also includes `pre` processing which retrieves, in parallel, user data and some information about the parent `foo` resource before ensuring the user has the ability to create the given resource.
 
 ### After
 
@@ -62,9 +62,7 @@ This cuts 24 lines down to 10 (with a few extra lines tossed in for readability)
 
 ### With Defaults
 
-Using the example above, imagine that for every call to `/foo/{foo_id}/bar` that you needed to load user and context data into the request before making a judgement regarding whether or not the user is allowed to access the `bar` resource.
-
-Using defaults you could define that behavior across all the `/foo/{foo_id}/bar` routes using the same `pre` config.
+Using the example above, imagine that for every call to `/foo/{foo_id}/bar` user and context data must be loaded into the request before making a judgement regarding whether or not the user is allowed to access the `bar` resource. Using defaults that behavior can be defined across all the `/foo/{foo_id}/bar` routes using the same `pre` config.
 
 ```javascript
 var def = new RBDefault(function(rb) {
@@ -119,7 +117,7 @@ var config =
 
 ## Route Defaults
 
-To utilize default configuration across routes instantiate an `RBDefault`.  It takes as part of its constructor a function that takes a `RouteBuilder` instance.  You can then chain any of the `RouteBuilder` functions.
+To utilize default configuration across routes instantiate an `RBDefault`.  It takes as part of its constructor a function that takes a `RouteBuilder` instance.  Any of the `RouteBuilder` functions can then be chained.
 
 Add the `RBDefault` instance to the RouteBuilder staticly using `RouteBuilder.addDefault`.
 
@@ -152,7 +150,7 @@ new RouteBuilder()
 
 This applies the default before `path` is called.  `path` overrides the default so that the output contains `path:"/api/bar"`.
 
-`RBDefault`s can also be applied when `build` is called.  This is best used when you do not intend to do default overriding.  You tell a default to be applied at `build` by using the `applyAtBuild` function on the RBDefault object.
+`RBDefault`s can also be applied when `build` is called.  This is best used when default overriding is not needed.  A default will be applied at `build` when the `applyAtBuild` function is called on the RBDefault object.
 
 ```javascript
 var def = new RBDefault(function(rb) {
