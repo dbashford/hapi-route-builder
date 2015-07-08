@@ -6,6 +6,7 @@ var utils = require("./utils")
 function RouteBuilder() {
   this.route = {};
   this.replaces = [];
+  this._applyDefaults(false);
 }
 
 RouteBuilder.defaultsArray = [];
@@ -24,13 +25,24 @@ RouteBuilder.clearDefaults = function() {
   this.defaultsArray = [];
 };
 
-RouteBuilder.prototype._applyDefaults = function() {
-  if (RouteBuilder.defaultsArray.length) {
+/**
+ * Applies RBDefaults based on whether the defaults argument
+ * atBuild defaults or not.
+ *
+ * @param boolean atBuild, whether or not the defaults to process
+ *   are atBuild defaults
+*/
+RouteBuilder.prototype._applyDefaults = function(atBuild) {
+  var defs = RouteBuilder.defaultsArray.filter(function(def){
+    return atBuild === def.atBuild;
+  });
+
+  if (defs.length) {
     var path = this.route.path
       , that = this
       ;
 
-    RouteBuilder.defaultsArray.forEach(function(_default) {
+    defs.forEach(function(_default) {
       // if includes exist, only using it
       if (_default.includes && _default.includes.length) {
         if (utils.isIncluded(path, _default.includes || [])) {
@@ -81,7 +93,7 @@ RouteBuilder.prototype.replace = function(key, val) {
 };
 
 RouteBuilder.prototype.build = function() {
-  this._applyDefaults();
+  this._applyDefaults(true);
   this._applyReplaces();
   this._checkForcedReplaces();
   return this.route;

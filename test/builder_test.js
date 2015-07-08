@@ -4,11 +4,11 @@ describe("building config", function() {
   });
 
   it("applies defaults", function(done) {
-    RouteBuilder.addDefault(function(rb) {
+    RouteBuilder.addDefault(new RBDefault(function(rb) {
       // will time out if not called
       expect(true).to.be.true;
       done();
-    });
+    }));
 
     new RouteBuilder()
       .method("POST")

@@ -130,13 +130,45 @@ var def = new RBDefault(function(rb) {
 RouteBuilder.addDefault(def);
 ```
 
-Defaults are applied to a route when you call an output function (`build` or `print` for instance).  That is important to keep in mind for those `RouteBuilder` functions for which call order matters.  A call to `preSerial` as part of a RBDefault will result in that added `pre` being the last in the `pre` array.  The `preSerial` function takes an optional `index` parameter to handle this case.
+### When defaults are applied
+
+A `RBDefault` can either be applied when `RouteBuilder` is constructed or when `build` is called.  By default it is applied when `RouteBuilder` is constructed. This sets up defaults before any other configuration is applied.  This means a default can be overridden by future calls.
+
+```javascript
+var def = new RBDefault(function(rb) {
+  rb.path("/api/foo")
+});
+
+RouteBuilder.addDefault(def);
+
+new RouteBuilder()
+  .path("/api/bar")
+  .build();
+```
+
+This applies the default before `path` is called.  `path` overrides the default so that the output contains `path:"/api/bar"`.
+
+`RBDefault`s can also be applied when `build` is called.  This is best used when you do not intend to do default overriding.  You tell a default to be applied at `build` by using the `applyAtBuild` function on the RBDefault object.
+
+```javascript
+var def = new RBDefault(function(rb) {
+  rb.path("/api/foo")
+}.applyAtBuild());
+
+RouteBuilder.addDefault(def);
+
+new RouteBuilder()
+  .path("/api/bar")
+  .build();
+```
+
+In this case the default overrides the configuration and `path` would be set to `/api/foo`.
 
 ## Configuration Replacements & Forced Replacements
 
 When `build` is called on a route, the RouteBuilder performs several tasks upon the assembled configuration.  
 
-First it applies defaults to the route being built assuming the route's `path` has had defaults applied.
+First it applies defaults that have indicated they need to be applied duringt he build.
 
 Next it will address any replacements registered for the routes using the `replace` function.  This allows for default config to be overridden, or possibly any external configuration to be used to update route config.
 
@@ -181,23 +213,13 @@ new RouteBuilder()
 ```
 
 #### `RouteBuilder.addDefault`
-This static function adds defaults to all RouteBuilder instances.  This function can take either a `RBDefault` object or a plain function that takes an instance of RouteBuilder as input.
+This static function adds defaults to all RouteBuilder instances.  This function takes a `RBDefault` object as input.
 
 ```javascript
 RouteBuilder.addDefault(new RBDefault(function(rb){
   rb.post(); // this would make all routes POSTs, here as short example only
 }));
 ```
-
-or
-
-```javascript
-RouteBuilder.addDefault(function(rb){
-  rb.post(); // this would make all routes POSTs, here as short example only
-});
-```
-
-The first form, using an RBDefault, has the benefit of being able to chain calls to `only` or `not` to be specific about what routes to apply the default too.
 
 #### `RouteBuilder.clearDefaults`
 This static function clears all defaults out of the RouteBuilder so future routes do not contain any configured defaults.  Important to note that this does not effect any routes created prior to clearing the defaults.
@@ -420,10 +442,10 @@ new RouteBuilder()
 ```
 
 #### `build`
-Creates a configuration object and returns it.  When `build` is called is also when any defaults are applied.
+Creates a configuration object and returns it. When `build` is called is also when any defaults that are to be applied during build are applied.
 
 ```javascript
-new RouteBuilder()
+new RouteBuilder()  
   .post()
   .path("/api/foo")
   .handler(function(request, reply) {
@@ -447,8 +469,22 @@ RouteBuilder.addDefault(
 );
 ```
 
+By default, `RBDefault`s are applied when a `RouteBuilder` is instantiated.
+
+#### `applyAtBuild`
+This function takes no parameters and indicates that a given `RBDefault` is to be applied when the configuration is built rather than when `RouteBuilder` is instantiated.  
+
+```javascript
+RouteBuilder.addDefault(
+  new RBDefault(function(rb) {
+    rb.preSerial("auth", authFunction)
+  })
+  .applyAtBuild();
+);
+```
+
 #### `only`
-`only` can be chained onto a `RBDefault` instance and allows for a default to be scoped to certain routes.  `only` can take a RegExp or a string, each of which is used to match any routes the RBDefault may be applied to.
+`only` can be chained onto a `RBDefault` instance only if `applyAtBuild` has first been called. `only` allows for a default to be scoped to certain routes. `only` can take a RegExp or a string, each of which is used to match any routes the RBDefault may be applied to.
 
 `only` itself can be chained.
 
@@ -456,14 +492,17 @@ RouteBuilder.addDefault(
 RouteBuilder.addDefault(
   new RBDefault(function(rb) {
     rb.preSerial("auth", authFunction)
-  }).only(/account/).only("/logout");
+  })
+  .applyAtBuild()
+  .only(/account/)
+  .only("/logout");
 );
 ```
 
 `only` cannot be used with `not`.
 
 #### `not`
-`not` can be chained onto a `RBDefault` instance and allows for specific routes to be eliminated from having the default applied. `not` can take a RegExp or a string, each of which is used to eliminate routes from having the RBDefault applied.
+`not` can be chained onto a `RBDefault` instance only if `applyAtBuild` has first been called. `not` and allows for specific routes to be eliminated from having the default applied. `not` can take a RegExp or a string, each of which is used to eliminate routes from having the RBDefault applied.
 
 `not` itself can be chained.
 
@@ -471,7 +510,10 @@ RouteBuilder.addDefault(
 RouteBuilder.addDefault(
   new RBDefault(function(rb) {
     rb.preSerial("auth", authFunction)
-  }).not(/profile/).not("/login");
+  })
+  .applyAtBuild()
+  .not(/profile/)
+  .not("/login");
 );
 ```
 
