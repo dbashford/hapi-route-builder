@@ -103,7 +103,7 @@ var RouteBuilder =  hrb.RouteBuilder;
 var RBDefault = hrb.RBDefault;
 ```
 
-## Route Buliding
+## Route Building
 
 Use the `RouteBuilder` by instantiating a new instance and then chaining its functions. Calling the `build` function will return the Hapi route configuration object.
 
