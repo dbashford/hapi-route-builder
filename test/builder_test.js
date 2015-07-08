@@ -22,7 +22,7 @@ describe("building config", function() {
 
     var config = new RouteBuilder()
       .method("POST")
-      .url("/foo/{id}")
+      .path("/foo/{id}")
       .pre([{
         assign:"foo",
         method:bar
@@ -41,7 +41,7 @@ describe("building config", function() {
   it("throws error replace when %% syntax not replaced", function() {
     var run = function() {
       new RouteBuilder()
-        .url("%replaceme%")
+        .path("%replaceme%")
         .build()
     };
 
@@ -51,7 +51,7 @@ describe("building config", function() {
   it("will not throw error if %% replaced", function() {
     var run = function() {
       new RouteBuilder()
-        .url("%replaceme")
+        .path("%replaceme")
         .replace("%replaceme%", "/api/foo")
         .build()
     };

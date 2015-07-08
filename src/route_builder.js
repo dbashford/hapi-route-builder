@@ -26,17 +26,17 @@ RouteBuilder.clearDefaults = function() {
 
 RouteBuilder.prototype._applyDefaults = function() {
   if (RouteBuilder.defaultsArray.length) {
-    var url = this.route.path
+    var path = this.route.path
       , that = this
       ;
 
     RouteBuilder.defaultsArray.forEach(function(_default) {
       // if includes exist, only using it
       if (_default.includes && _default.includes.length) {
-        if (utils.isIncluded(url, _default.includes || [])) {
+        if (utils.isIncluded(path, _default.includes || [])) {
           (_default.func || _default)(that);
         }
-      } else if (!utils.isExcluded(url, _default.excludes || [])) {
+      } else if (!utils.isExcluded(path, _default.excludes || [])) {
         (_default.func || _default)(that);
       }
     });

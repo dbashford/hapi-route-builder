@@ -48,7 +48,7 @@ Here we have a simple POST route which creates a `bar` resource.  It includes so
 var config =
   new RouteBuilder()
     .post()
-    .url("/foo/{foo_id}/bar/{bar_id}/")
+    .path("/foo/{foo_id}/bar/{bar_id}/")
     .handler(handle)
     .validatePayloadKey("keywords", validateKeywords)
     .preParallel(["userData", shared.loadUserData], ["contextData", shared.loadFooData])
@@ -81,7 +81,7 @@ Now the route config for all the `/foo/{foo_id}/bar` routes need not create that
 var config =
   new RouteBuilder()
     .post()
-    .url("/foo/{foo_id}/bar/{bar_id}/")
+    .path("/foo/{foo_id}/bar/{bar_id}/")
     .handler(handle)
     .validatePayloadKey("keywords", validateKeywords)
     .build()
@@ -111,7 +111,7 @@ Use the `RouteBuilder` by instantiating a new instance and then chaining its fun
 var config =
   new RouteBuilder()
     .post()
-    .url("/api/foo")
+    .path("/api/foo")
     .build();
 ```
 
@@ -136,7 +136,7 @@ Defaults are applied to a route when you call an output function (`build` or `pr
 
 When `build` is called on a route, the RouteBuilder performs several tasks upon the assembled configuration.  
 
-First it applies defaults to the route being built assuming the route's `url` has had defaults applied.
+First it applies defaults to the route being built assuming the route's `path` has had defaults applied.
 
 Next it will address any replacements registered for the routes using the `replace` function.  This allows for default config to be overridden, or possibly any external configuration to be used to update route config.
 
@@ -146,16 +146,16 @@ As a naive example, assume all routes must have a `path`.
 
 ```javascript
 RouteBuilder.addDefault(new RBDefault(function(rb) {
-  rb.url("%replaceme%")
+  rb.path("%replaceme%")
 }));
 ```
 
-Now, when `build`ing a route, if the `url` hasn't been set, `build` will throw an error.
+Now, when `build`ing a route, if the `path` hasn't been set, `build` will throw an error.
 
 ```javascript
 new RouteBuilder()
   .post()
-  .build() // throws error because url not set.
+  .build() // throws error because path not set.
 ```
 
 To replace it, use the `replace` function.
@@ -304,11 +304,11 @@ Expresses a route is an OPTIONS.
 new RouteBuilder().options()
 ```
 
-#### `url`
+#### `path`
 Sets the `path` property for a Hapi route.
 
 ```javascript
-new RouteBuilder().url("/foo/{foo_id}/bar/{bar_id}/")
+new RouteBuilder().path("/foo/{foo_id}/bar/{bar_id}/")
 ```
 
 #### `handler`
@@ -425,7 +425,7 @@ Creates a configuration object and returns it.  When `build` is called is also w
 ```javascript
 new RouteBuilder()
   .post()
-  .url("/api/foo")
+  .path("/api/foo")
   .handler(function(request, reply) {
     reply("foo");
   })

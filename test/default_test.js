@@ -45,7 +45,7 @@ describe("defaults", function() {
   });
 
   var withNot = function(type, called, matcher, matcher2) {
-    it("when url is excluded via " + type, function(done) {
+    it("when path is excluded via " + type, function(done) {
       var def = new RBDefault(function(rb) {
         expect(called).to.be.true;
         if (called) {
@@ -57,7 +57,7 @@ describe("defaults", function() {
       }
       RouteBuilder.addDefault(def);
 
-      new RouteBuilder().url("/url/ignore").build();
+      new RouteBuilder().path("/path/ignore").build();
       if (!called) {
         setTimeout(function() {
           done();
@@ -67,7 +67,7 @@ describe("defaults", function() {
   };
 
   var withOnly = function(type, called, matcher, matcher2) {
-    it("when url is included via " + type, function(done) {
+    it("when path is included via " + type, function(done) {
       var def = new RBDefault(function(rb) {
         expect(called).to.be.true;
         if (called) {
@@ -79,7 +79,7 @@ describe("defaults", function() {
       }
       RouteBuilder.addDefault(def);
 
-      new RouteBuilder().url("/url/ignore").build();
+      new RouteBuilder().path("/path/ignore").build();
       if(!called) {
         setTimeout(function() {
           done();
@@ -91,26 +91,26 @@ describe("defaults", function() {
   describe("only/not tests", function() {
 
     describe("will not be called", function() {
-      withNot("string", false, "/url/ignore");
+      withNot("string", false, "/path/ignore");
       withNot("regex", false, /ignore/);
-      withNot("multiple strings", false, "foo", "/url/ignore");
+      withNot("multiple strings", false, "foo", "/path/ignore");
       withNot("multiple regexs", false, "foo", /ignore/);
 
-      withOnly("string", false, "/url/somethingelse");
+      withOnly("string", false, "/path/somethingelse");
       withOnly("regex", false, /somethingelse/);
-      withOnly("multiple strings", false, "/url/foo", "/url/bar");
+      withOnly("multiple strings", false, "/path/foo", "/path/bar");
       withOnly("multiple regexs", false, /somethingelse/, /foo/);
     });
 
     describe("will be called", function() {
-      withNot("string", true, "/url/bar");
+      withNot("string", true, "/path/bar");
       withNot("regex", true, /foo/);
-      withNot("multiple strings", true, "foo", "/url/ignor");
+      withNot("multiple strings", true, "foo", "/path/ignor");
       withNot("multiple regexs", true, "foo", /ignre/);
 
-      withOnly("string", true, "/url/ignore");
+      withOnly("string", true, "/path/ignore");
       withOnly("regex", true, /ignore/);
-      withOnly("multiple strings", true, "/url/foo", "/url/ignore");
+      withOnly("multiple strings", true, "/path/foo", "/path/ignore");
       withOnly("multiple regexs", true, /somethingelse/, /ignore/);
     });
   });

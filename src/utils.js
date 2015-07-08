@@ -18,18 +18,18 @@ exports.ensure = function(obj, key) {
   }
 };
 
-exports.isExcluded = exports.isIncluded = function(url, items) {
+exports.isExcluded = exports.isIncluded = function(path, items) {
 
   for (var i = 0, iLen = items.length;  i < iLen; i++ ) {
     var item = items[i];
     if (typeof item === "string") {
-      if (url === item) {
+      if (path === item) {
         return true;
       }
     }
 
     if (item instanceof RegExp) {
-      if (item.test(url)) {
+      if (item.test(path)) {
         return true;
       }
     }

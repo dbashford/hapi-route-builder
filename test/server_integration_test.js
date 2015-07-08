@@ -6,7 +6,7 @@ describe("routes with method will call handler", function() {
 
   var test = function(meth) {
     it(meth.toUpperCase(), function(done) {
-      var config = new RouteBuilder().url("/api/test_url")[meth]().handler(function(request, reply) {
+      var config = new RouteBuilder().path("/api/test_path")[meth]().handler(function(request, reply) {
         // get does not have payload
         if (meth === "get") {
           request.payload = { foo: "bar"};
@@ -17,7 +17,7 @@ describe("routes with method will call handler", function() {
 
       new TestServer(config, done).andTest(function(request, stop) {
         request
-         [meth]("/api/test_url")
+         [meth]("/api/test_path")
          .send({foo:"bar"})
          .end(function(err, res) {
            expect(res.body.foo).to.eql("bar_returned");
@@ -36,15 +36,15 @@ describe("routes with method will call handler", function() {
 });
 
 var basicallyShitWorks = function(done) {
-  var url = "/api/test_url";
-  var config = new RouteBuilder().url(url).post().handler(function(request, reply) {
+  var path = "/api/test_path";
+  var config = new RouteBuilder().path(path).post().handler(function(request, reply) {
     expect(true).to.be.true;
     reply();
   }).build();
 
   new TestServer(config, done).andTest(function(request, stop) {
     request
-      .post(url)
+      .post(path)
       .send({foo:"bar"})
       .end(function(err, res) {
         stop();
@@ -52,7 +52,7 @@ var basicallyShitWorks = function(done) {
   });
 };
 
-describe("urls configured", function() {
+describe("paths configured", function() {
   it("will be reached", function(done) {
     basicallyShitWorks(done);
   });
@@ -67,7 +67,7 @@ describe("handlers configured", function() {
 describe("valiation", function() {
   var test= function(done, func, payload) {
     var builder = new RouteBuilder()
-      .url("/api/foo")
+      .path("/api/foo")
       .post()
 
     var config = builder[func].apply(builder, payload)
@@ -104,7 +104,7 @@ describe("pre", function() {
   it("will be executed", function(done) {
 
     var config = new RouteBuilder()
-      .url("/api/foo")
+      .path("/api/foo")
       .get()
       .pre([{
         assign:"foo",
@@ -147,7 +147,7 @@ describe("pre", function() {
 
   var buildPreTestConfig = function(pre) {
     return new RouteBuilder()
-      .url("/api/foo")
+      .path("/api/foo")
       .get()
       .pre(pre)
       .handler(handler)
@@ -213,7 +213,7 @@ describe("pre", function() {
 
   var buildPreSerialTestConfig = function(pre1, pre2, pre3) {
     var config = new RouteBuilder()
-      .url("/api/foo")
+      .path("/api/foo")
       .get();
 
     if (pre3) {
@@ -266,7 +266,7 @@ describe("pre", function() {
         throw new Error("foo-bar");
       };
       var config = new RouteBuilder()
-        .url("/api/foo")
+        .path("/api/foo")
         .get()
         .preSerial("testVar", preFunc, "ignore")
         .handler(handler)
@@ -276,7 +276,7 @@ describe("pre", function() {
 
     it("2 serials", function(done) {
       var config = new RouteBuilder()
-        .url("/api/foo")
+        .path("/api/foo")
         .get()
         .preSerial("testVar", preFunc)
         .preSerial("testVar", function(request, reply) {
@@ -291,7 +291,7 @@ describe("pre", function() {
 
   var buildPreParalellTestConfig = function(pre1, pre2, pre3) {
     var config = new RouteBuilder()
-      .url("/api/foo")
+      .path("/api/foo")
       .get();
 
     if (pre3) {
@@ -316,7 +316,7 @@ describe("pre", function() {
         throw new Error("foo-bar");
       };
       var config = new RouteBuilder()
-        .url("/api/foo")
+        .path("/api/foo")
         .get()
         .preParallel(["testVar", preFunc, "ignore"])
         .handler(handler)
@@ -326,7 +326,7 @@ describe("pre", function() {
 
     it("2 parallels", function(done) {
       var config = new RouteBuilder()
-        .url("/api/foo")
+        .path("/api/foo")
         .get()
         .preParallel(["testVar", preFunc])
         .preParallel(["testVar", function(request, reply) {
@@ -348,7 +348,7 @@ describe("pre", function() {
       };
 
       var config = new RouteBuilder()
-        .url("/api/foo")
+        .path("/api/foo")
         .get()
         .preParallel(["testVar1", preFunc1], ["testVar2", preFunc2])
         .handler(function(request, reply){

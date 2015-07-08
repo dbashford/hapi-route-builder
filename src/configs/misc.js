@@ -1,8 +1,8 @@
 var RouteBuilder = require("../route_builder")
   ;
 
-RouteBuilder.prototype.url = function(url) {
-  this.route.path = url;
+RouteBuilder.prototype.path = function(path) {
+  this.route.path = path;
   return this;
 };
 

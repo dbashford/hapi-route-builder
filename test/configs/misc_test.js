@@ -1,9 +1,9 @@
 var noop = function(){};
   ;
 
-describe("url tests", function() {
-  it("will build a url config", function() {
-    expect(new RouteBuilder().url("/foo/bar/baz").build()).to.eql({path:"/foo/bar/baz"});
+describe("path tests", function() {
+  it("will build a path config", function() {
+    expect(new RouteBuilder().path("/foo/bar/baz").build()).to.eql({path:"/foo/bar/baz"});
   })
 });
 
