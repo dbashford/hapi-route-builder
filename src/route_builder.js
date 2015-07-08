@@ -1,5 +1,6 @@
-var utils = require("./utils")
-  , traverse = require('traverse')
+var traverse = require("traverse")
+  , utils = require("./utils")
+  , RBDefault = require("./rb_defaults")
   , replaceCheck = /^%.*%$/
   ;
 
@@ -18,6 +19,11 @@ RouteBuilder.defaultsArray = [];
  * @param {Defaults} defaults object
  */
 RouteBuilder.addDefault = function(configDefault) {
+
+  if(!(configDefault instanceof RBDefault)) {
+    throw Error("Must pass instance of RBDefault into addDefault");
+  }
+
   RouteBuilder.defaultsArray.push(configDefault);
 };
 
@@ -46,10 +52,10 @@ RouteBuilder.prototype._applyDefaults = function(atBuild) {
       // if includes exist, only using it
       if (_default.includes && _default.includes.length) {
         if (utils.isIncluded(path, _default.includes || [])) {
-          (_default.func || _default)(that);
+          _default.func(that);
         }
       } else if (!utils.isExcluded(path, _default.excludes || [])) {
-        (_default.func || _default)(that);
+        _default.func(that);
       }
     });
   }

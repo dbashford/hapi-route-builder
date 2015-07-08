@@ -75,10 +75,11 @@ describe("defaults", function() {
     expect(config.path).to.eql("barrr");
   });
 
-
-  it("can be added directly", function() {
-    RouteBuilder.addDefault(function(rb) {});
-    expect(RouteBuilder.defaultsArray.length).to.eql(1);
+  it("cannot be added directly", function() {
+    var funct = function() {
+      RouteBuilder.addDefault(function(rb) {});
+    };
+    expect(funct).to.throw(Error);
   });
 
   it("can be added as RBDefault", function() {
@@ -87,7 +88,7 @@ describe("defaults", function() {
   });
 
   it("can be cleared", function() {
-    RouteBuilder.addDefault(function(rb) {});
+    RouteBuilder.addDefault(new RBDefault(function(rb) {}));
     expect(RouteBuilder.defaultsArray.length).to.eql(1);
     RouteBuilder.clearDefaults();
     expect(RouteBuilder.defaultsArray.length).to.eql(0);

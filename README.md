@@ -213,7 +213,7 @@ new RouteBuilder()
 ```
 
 #### `RouteBuilder.addDefault`
-This static function adds defaults to all RouteBuilder instances.  This function takes a `RBDefault` object as input.
+This static function adds defaults to all RouteBuilder instances.  This function takes a `RBDefault` object as input. If something other than an RBDefault is passed in, an Error will be thrown.
 
 ```javascript
 RouteBuilder.addDefault(new RBDefault(function(rb){
