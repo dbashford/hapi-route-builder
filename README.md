@@ -138,8 +138,8 @@ A `RBDefault` can either be applied when `RouteBuilder` is constructed or when `
 
 ```javascript
 var def = new RBDefault(function(rb) {
-  rb.path("/api/foo")
-});
+    rb.path("/api/foo")
+  });
 
 RouteBuilder.addDefault(def);
 
@@ -154,8 +154,8 @@ This applies the default before `path` is called.  `path` overrides the default 
 
 ```javascript
 var def = new RBDefault(function(rb) {
-  rb.path("/api/foo")
-}.applyAtBuild());
+    rb.path("/api/foo")
+  }.applyAtBuild());
 
 RouteBuilder.addDefault(def);
 
