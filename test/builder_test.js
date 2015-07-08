@@ -37,4 +37,26 @@ describe("building config", function() {
     expect(config.path).to.eql("foo/{foo_id}");
     expect(config.config.pre[0]).to.eql(bar);
   });
+
+  it("throws error replace when %% syntax not replaced", function() {
+    var run = function() {
+      new RouteBuilder()
+        .url("%replaceme%")
+        .build()
+    };
+
+    expect(run).to.throw(Error);
+  });
+
+  it("will not throw error if %% replaced", function() {
+    var run = function() {
+      new RouteBuilder()
+        .url("%replaceme")
+        .replace("%replaceme%", "/api/foo")
+        .build()
+    };
+
+    expect(run).to.not.throw(Error);
+  });
+
 });

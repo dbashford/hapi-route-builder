@@ -1,5 +1,6 @@
 var utils = require("./utils")
   , traverse = require('traverse')
+  , replaceCheck = /^%.*%$/
   ;
 
 function RouteBuilder() {
@@ -66,6 +67,14 @@ RouteBuilder.prototype._applyReplaces = function() {
   }
 };
 
+RouteBuilder.prototype._checkForcedReplaces = function() {
+  traverse(this.route).forEach(function (x) {
+    if (typeof x === "string" && replaceCheck.test(x)) {
+      throw new Error("String " + x + " not replaced in the configuration.");
+    }
+  });
+};
+
 RouteBuilder.prototype.replace = function(key, val) {
   this.replaces.push({key:key, val:val});
   return this;
@@ -74,6 +83,7 @@ RouteBuilder.prototype.replace = function(key, val) {
 RouteBuilder.prototype.build = function() {
   this._applyDefaults();
   this._applyReplaces();
+  this._checkForcedReplaces();
   return this.route;
 };
 

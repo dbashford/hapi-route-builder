@@ -4,7 +4,7 @@
 
 hapi-route-builder is a library for building routes in [Hapi](http://hapijs.com/). The goal of this library is to allow for dynamic and terse route building while isolating your application's routes from possible breakages when updating Hapi versions.
 
-hapi-route-builder uses the [Builder Pattern](https://en.wikipedia.org/wiki/Builder_pattern) to create route configuration. The library's[fluent API](https://en.wikipedia.org/wiki/Fluent_interface#JavaScript) makes your route configuration readable.
+hapi-route-builder uses the [Builder Pattern](https://en.wikipedia.org/wiki/Builder_pattern) to create route configuration. The library's [fluent API](https://en.wikipedia.org/wiki/Fluent_interface#JavaScript) makes your route configuration readable.
 
 To help reduce duplication in the configuration the library includes the ability to set default configuration and to constrain those defaults to certain routes or route patterns.
 
@@ -95,15 +95,17 @@ But the output is the same.
 
 `npm install --save hapi-route-builder`
 
+# Usage
+
 ```javascript
 var hrb = require("hapi-route-builder");
 var RouteBuilder =  hrb.RouteBuilder;
 var RBDefault = hrb.RBDefault;
 ```
 
-## RouteBuilder
+## Route Buliding
 
-Use the RouteBuilder by instantiating a new instance and then chaining its functions. Calling the `build` function will return the Hapi route configuration object.
+Use the `RouteBuilder` by instantiating a new instance and then chaining its functions. Calling the `build` function will return the Hapi route configuration object.
 
 ```javascript
 var config =
@@ -113,7 +115,7 @@ var config =
     .build();
 ```
 
-## RBDefault
+## Route Defaults
 
 To utilize default configuration across routes instantiate an `RBDefault`.  It takes as part of its constructor a function that takes a `RouteBuilder` instance.  You can then chain any of the `RouteBuilder` functions.
 
@@ -130,7 +132,40 @@ RouteBuilder.addDefault(def);
 
 Defaults are applied to a route when you call an output function (`build` or `print` for instance).  That is important to keep in mind for those `RouteBuilder` functions for which call order matters.  A call to `preSerial` as part of a RBDefault will result in that added `pre` being the last in the `pre` array.  The `preSerial` function takes an optional `index` parameter to handle this case.
 
-Any `replace`ments, registered using the `replace` function, are the only things executed after defaults are applied.
+## Configuration Replacements & Forced Replacements
+
+When `build` is called on a route, the RouteBuilder performs several tasks upon the assembled configuration.  
+
+First it applies defaults to the route being built assuming the route's `url` has had defaults applied.
+
+Next it will address any replacements registered for the routes using the `replace` function.  This allows for default config to be overridden, or possibly any external configuration to be used to update route config.
+
+Last it will check the entire configuration to see if any values, either object values or values of Arrays, are set to a string that both begins and ends with `%`.  If any such string exists anywhere in the configuration, an Error will be thrown.  Strings surrounded with percent signs must be replaced using the `replace` function.  This forced replacement functionality allows a default to be applied that must be implemented by all, or a subset, of routes.
+
+As a naive example, assume all routes must have a `path`.
+
+```javascript
+RouteBuilder.addDefault(new RBDefault(function(rb) {
+  rb.url("%replaceme%")
+}));
+```
+
+Now, when `build`ing a route, if the `url` hasn't been set, `build` will throw an error.
+
+```javascript
+new RouteBuilder()
+  .post()
+  .build() // throws error because url not set.
+```
+
+To replace it, use the `replace` function.
+
+```javascript
+new RouteBuilder()
+  .post()
+  .replace("%replaceme%", "/api/foo")
+  .build() // does not throw error
+```
 
 # API
 
