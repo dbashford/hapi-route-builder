@@ -7,19 +7,22 @@ var Hapi = require("hapi")
   };
 
 
-function TestServer (routeConfig, done) {
-  this.done = done;
+function TestServer (opts) {
+  this.done = opts.done;
 
   this.server = new Hapi.Server({debug:false});
   this.server.method('testVar', testVar);
 
-  this.server.connection({port: 3000});
-  this.server.route(routeConfig);
+  this.server.connection({
+    host: opts.host || "localhost",
+    //port: 3000
+  });
+  this.server.route(opts.routeConfig);
 
   var that = this;
   this.server.start(function(){
     process.nextTick(that.runTest.bind(that));
-  });
+  }.bind(this));
 }
 
 TestServer.prototype.andTest = function(cb) {
@@ -28,7 +31,7 @@ TestServer.prototype.andTest = function(cb) {
 
 TestServer.prototype.runTest = function() {
   if (this.test) {
-    this.test(request(this.server.listener), this.stop.bind(this));
+    this.test(this.server, request(this.server.listener), this.stop.bind(this));
   } else {
     console.log("No test registered");
     this.stop();

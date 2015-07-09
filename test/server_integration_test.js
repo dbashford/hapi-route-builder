@@ -15,7 +15,7 @@ describe("routes with method will call handler", function() {
         reply({foo:returned});
       }).build();
 
-      new TestServer(config, done).andTest(function(request, stop) {
+      new TestServer({routeConfig: config, done: done}).andTest(function(server, request, stop) {
         request
          [meth]("/api/test_path")
          .send({foo:"bar"})
@@ -38,25 +38,78 @@ describe("routes with method will call handler", function() {
 var basicallyShitWorks = function(done) {
   var path = "/api/test_path";
   var config = new RouteBuilder().path(path).post().handler(function(request, reply) {
-    expect(true).to.be.true;
     reply();
   }).build();
 
-  new TestServer(config, done).andTest(function(request, stop) {
+  new TestServer({routeConfig: config, done: done}).andTest(function(server, request, stop) {
     request
       .post(path)
       .send({foo:"bar"})
       .end(function(err, res) {
+        expect(res.statusCode).to.eql(200);
         stop();
       });
   });
 };
 
-describe("paths configured", function() {
+  describe("paths configured", function() {
   it("will be reached", function(done) {
     basicallyShitWorks(done);
   });
 });
+
+describe("vhost configured", function() {
+
+  var path = "/api/test_path";
+  var config = new RouteBuilder()
+    .path(path)
+    .get()
+    .vhost("foo.example.com")
+    .handler(function(request, reply) {
+      reply("foooooo");
+    })
+    .build();
+
+  var opts = {
+    routeConfig: config,
+    host: "example.com"
+  };
+
+  it("will be reached", function(done) {
+    opts.done = done;
+    new TestServer(opts).andTest(function(server, request, stop) {
+      server.inject({
+        method: 'GET',
+        url: path,
+        headers: {
+          'Set-Cookie': 'mycookie=test',
+          'Host': 'foo.example.com'
+        }
+      }, function(res) {
+        expect(res.statusCode).to.eql(200);
+        expect(res.payload).to.eql("foooooo")
+        stop();
+      });
+    });
+  });
+
+  it("will not be reached when not hitting vhost", function(done) {
+    opts.done = done;
+    new TestServer(opts).andTest(function(server, request, stop) {
+      server.inject({
+        method: 'GET',
+        url: path,
+        headers: {
+          'Set-Cookie': 'mycookie=test'
+        }
+      }, function(res) {
+        expect(res.statusCode).to.eql(404);
+        stop();
+      });
+    });
+  });
+});
+
 
 describe("handlers configured", function() {
   it("will be called", function(done) {
@@ -76,7 +129,7 @@ describe("valiation", function() {
       })
       .build();
 
-    new TestServer(config, done).andTest(function(request, stop) {
+    new TestServer({routeConfig: config, done: done}).andTest(function(server, request, stop) {
       request
        .post("/api/foo")
        .send({name:5})
@@ -97,35 +150,6 @@ describe("valiation", function() {
     test(done, "validatePayloadKey", ["name", Joi.string().required()]);
   });
 
-});
-
-describe("pre", function() {
-
-  it("will be executed", function(done) {
-
-    var config = new RouteBuilder()
-      .path("/api/foo")
-      .get()
-      .pre([{
-        assign:"foo",
-        method: function(request, reply) {
-          reply("barrrrrr");
-        }
-      }])
-      .handler(function(request, reply) {
-        reply(request.pre.foo);
-      })
-      .build();
-
-    new TestServer(config, done).andTest(function(request, stop) {
-      request
-        .get("/api/foo")
-        .end(function(err, res) {
-          expect(res.text).to.eql("barrrrrr")
-          stop();
-        });
-    });
-  });
 });
 
 describe("pre", function() {
@@ -155,7 +179,7 @@ describe("pre", function() {
   };
 
   var test = function(done, config, testPre, matcher) {
-    new TestServer(config, done).andTest(function(request, stop) {
+    new TestServer({routeConfig: config, done: done}).andTest(function(server, request, stop) {
       request
         .get("/api/foo?bar=bar")
         .end(function(err, res) {
@@ -167,6 +191,33 @@ describe("pre", function() {
         });
     });
   };
+
+  it("will be executed", function(done) {
+
+    var config = new RouteBuilder()
+      .path("/api/foo")
+      .get()
+      .pre([{
+        assign:"foo",
+        method: function(request, reply) {
+          reply("barrrrrr");
+        }
+      }])
+      .handler(function(request, reply) {
+        reply(request.pre.foo);
+      })
+      .build();
+
+    new TestServer({routeConfig: config, done: done}).andTest(function(server, request, stop) {
+      request
+        .get("/api/foo")
+        .end(function(err, res) {
+          expect(res.text).to.eql("barrrrrr")
+          stop();
+        });
+    });
+  });
+
 
   describe("built direct", function() {
     it("1 argument, array", function(done) {
@@ -356,7 +407,7 @@ describe("pre", function() {
         })
         .build();
 
-      new TestServer(config, done).andTest(function(request, stop) {
+      new TestServer({routeConfig: config, done: done}).andTest(function(server, request, stop) {
         request
           .get("/api/foo")
           .end(function(err, res) {

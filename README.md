@@ -335,6 +335,13 @@ Sets the `path` property for a Hapi route.
 new RouteBuilder().path("/foo/{foo_id}/bar/{bar_id}/")
 ```
 
+#### `vhost`
+Sets the `vhost` property for a Hapi route.
+
+```javascript
+new RouteBuilder().vhost("foo")
+```
+
 #### `handler`
 Sets the `handler` property for a Hapi route.
 
