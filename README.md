@@ -203,6 +203,33 @@ new RouteBuilder()
 
 # API
 
+* [RouteBuilder](#routebuilder)
+  * [new RouteBuilder()](#constructor)
+  * [RouteBuilder.addDefault()](#routebuilderadddefault)
+  * [RouteBuilder.clearDefaults()](#routebuildercleardefaults)
+  * [replace()](#replace)
+  * [method()](#method)
+  * [post()](#post)
+  * [get()](#get)
+  * [put()](#put)
+  * [delete()](#delete)
+  * [patch()](#patch)
+  * [options()](#options)
+  * [path()](#path)
+  * [vhost()](#vhost)
+  * [handler()](#handler)
+  * [validatePayload()](#validatepayload)
+  * [validatePayloadKey()](#validatepayloadkey)
+  * [pre()](#pre)
+  * [preSerial()](#preserial)
+  * [preParallel()](#preparallel)
+  * [build()](#build)
+* [RBDefault](#rbdefault)
+  * [new RBDefault()](#constructor-1)
+  * [applyAtBuild()](#applyatbuild)
+  * [only()](#only)
+  * [not()](#not)
+
 ## RouteBuilder
 
 For details about the config being set up by the RouteBuilder, check the hapi route documentation for [route configuration](http://hapijs.com/api#route-configuration) and [additional route options](http://hapijs.com/api#route-options).
