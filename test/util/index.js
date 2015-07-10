@@ -1,5 +1,4 @@
 var Hapi = require("hapi")
-  , request = require('supertest')
   ;
 
   var testVar = function (a, next) {
@@ -31,7 +30,7 @@ TestServer.prototype.andTest = function(cb) {
 
 TestServer.prototype.runTest = function() {
   if (this.test) {
-    this.test(this.server, request(this.server.listener), this.stop.bind(this));
+    this.test(this.server, this.stop.bind(this));
   } else {
     console.log("No test registered");
     this.stop();

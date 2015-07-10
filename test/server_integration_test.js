@@ -15,14 +15,15 @@ describe("routes with method will call handler", function() {
         reply({foo:returned});
       }).build();
 
-      new TestServer({routeConfig: config, done: done}).andTest(function(server, request, stop) {
-        request
-         [meth]("/api/test_path")
-         .send({foo:"bar"})
-         .end(function(err, res) {
-           expect(res.body.foo).to.eql("bar_returned");
-           stop();
-         });
+      new TestServer({routeConfig: config, done: done}).andTest(function(server, stop) {
+        server.inject({
+          method: meth.toUpperCase(),
+          url: "/api/test_path",
+          payload: {foo:"bar"}
+        }, function(res) {
+          expect(res.result.foo).to.eql("bar_returned");
+          stop();
+        });
       });
     });
   };
@@ -41,14 +42,15 @@ var basicallyShitWorks = function(done) {
     reply();
   }).build();
 
-  new TestServer({routeConfig: config, done: done}).andTest(function(server, request, stop) {
-    request
-      .post(path)
-      .send({foo:"bar"})
-      .end(function(err, res) {
-        expect(res.statusCode).to.eql(200);
-        stop();
-      });
+  new TestServer({routeConfig: config, done: done}).andTest(function(server, stop) {
+    server.inject({
+      method: "POST",
+      url: path,
+      payload: {foo:"bar"}
+    }, function(res) {
+      expect(res.statusCode).to.eql(200);
+      stop();
+    });
   });
 };
 
@@ -77,7 +79,7 @@ describe("vhost configured", function() {
 
   it("will be reached", function(done) {
     opts.done = done;
-    new TestServer(opts).andTest(function(server, request, stop) {
+    new TestServer(opts).andTest(function(server, stop) {
       server.inject({
         method: 'GET',
         url: path,
@@ -95,7 +97,7 @@ describe("vhost configured", function() {
 
   it("will not be reached when not hitting vhost", function(done) {
     opts.done = done;
-    new TestServer(opts).andTest(function(server, request, stop) {
+    new TestServer(opts).andTest(function(server, stop) {
       server.inject({
         method: 'GET',
         url: path,
@@ -129,15 +131,16 @@ describe("valiation", function() {
       })
       .build();
 
-    new TestServer({routeConfig: config, done: done}).andTest(function(server, request, stop) {
-      request
-       .post("/api/foo")
-       .send({name:5})
-       .end(function(err, res) {
-         expect(res.body.message).to.eql("child \"name\" fails because [\"name\" must be a string]");
-         expect(res.body.statusCode).to.eql(400)
-         stop();
-       });
+    new TestServer({routeConfig: config, done: done}).andTest(function(server, stop) {
+      server.inject({
+        method: "POST",
+        url: "/api/foo",
+        payload: {name:5}
+      }, function(res) {
+        expect(res.statusCode).to.eql(400);
+        expect(res.result.message).to.eql("child \"name\" fails because [\"name\" must be a string]");
+        stop();
+      });
     });
   };
 
@@ -179,16 +182,18 @@ describe("pre", function() {
   };
 
   var test = function(done, config, testPre, matcher) {
-    new TestServer({routeConfig: config, done: done}).andTest(function(server, request, stop) {
-      request
-        .get("/api/foo?bar=bar")
-        .end(function(err, res) {
-          if (testPre) {
-            expect(res.text).to.eql(matcher || "foo-bar");
-          }
-          expect(called).to.be.true;
-          stop();
-        });
+    new TestServer({routeConfig: config, done: done}).andTest(function(server, stop) {
+      server.inject({
+        method: "GET",
+        url: "/api/foo?bar=bar",
+        payload: {name:5}
+      }, function(res) {
+        if (testPre) {
+          expect(res.payload).to.eql(matcher || "foo-bar");
+        }
+        expect(called).to.be.true;
+        stop();
+      });
     });
   };
 
@@ -208,13 +213,15 @@ describe("pre", function() {
       })
       .build();
 
-    new TestServer({routeConfig: config, done: done}).andTest(function(server, request, stop) {
-      request
-        .get("/api/foo")
-        .end(function(err, res) {
-          expect(res.text).to.eql("barrrrrr")
-          stop();
-        });
+    new TestServer({routeConfig: config, done: done}).andTest(function(server, stop) {
+
+      server.inject({
+        method: "GET",
+        url: "/api/foo"
+      }, function(res) {
+        expect(res.payload).to.eql("barrrrrr")
+        stop();
+      });
     });
   });
 
@@ -407,13 +414,15 @@ describe("pre", function() {
         })
         .build();
 
-      new TestServer({routeConfig: config, done: done}).andTest(function(server, request, stop) {
-        request
-          .get("/api/foo")
-          .end(function(err, res) {
-            expect(res.text).to.eql("fooooo-barrrr");
-            stop();
-          });
+      new TestServer({routeConfig: config, done: done}).andTest(function(server, stop) {
+
+        server.inject({
+          method: "GET",
+          url: "/api/foo"
+        }, function(res) {
+          expect(res.payload).to.eql("fooooo-barrrr")
+          stop();
+        });
       });
 
     });
