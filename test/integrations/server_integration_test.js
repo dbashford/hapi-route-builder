@@ -1,4 +1,4 @@
-var TestServer = new require("./util").TestServer
+var TestServer = new require("../util").TestServer
   , Joi = require("joi")
   ;
 
