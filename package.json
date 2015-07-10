@@ -24,16 +24,14 @@
     "traverse":"0.6.6"
   },
   "devDependencies": {
-    "chai": "3.0.0",
     "coveralls": "^2.11.2",
     "hapi": "8.6.1",
-    "istanbul": "^0.3.17",
     "joi": "6.4.3",
-    "mocha": "2.2.5",
-    "mocha-lcov-reporter": "0.0.2"
+    "lab": "5.13.0",
+    "code": "1.4.1"
   },
   "scripts": {
-    "test": "node_modules/.bin/mocha"
+    "test": "test/run"
   },
   "license": "MIT",
   "engines": {

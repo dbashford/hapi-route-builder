@@ -1,6 +1,7 @@
 describe("building config", function() {
-  afterEach(function() {
+  afterEach(function(done) {
     RouteBuilder.clearDefaults();
+    done();
   });
 
   it("applies defaults", function(done) {
@@ -15,7 +16,7 @@ describe("building config", function() {
       .build();
   });
 
-  it("applies replaces", function() {
+  it("applies replaces", function(done) {
     var bar = function() {
       return "foo";
     };
@@ -34,11 +35,12 @@ describe("building config", function() {
       }, bar)
       .build()
 
-    expect(config.path).to.eql("foo/{foo_id}");
-    expect(config.config.pre[0]).to.eql(bar);
+    expect(config.path).to.equal("foo/{foo_id}");
+    expect(config.config.pre[0]).to.equal(bar);
+    done();
   });
 
-  it("throws error replace when %% syntax not replaced", function() {
+  it("throws error replace when %% syntax not replaced", function(done) {
     var run = function() {
       new RouteBuilder()
         .path("%replaceme%")
@@ -46,9 +48,10 @@ describe("building config", function() {
     };
 
     expect(run).to.throw(Error);
+    done();
   });
 
-  it("will not throw error if %% replaced", function() {
+  it("will not throw error if %% replaced", function(done) {
     var run = function() {
       new RouteBuilder()
         .path("%replaceme")
@@ -56,7 +59,8 @@ describe("building config", function() {
         .build()
     };
 
-    expect(run).to.not.throw(Error);
+    expect(run).to.not.throw();
+    done();
   });
 
 });

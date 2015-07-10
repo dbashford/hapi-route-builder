@@ -21,7 +21,7 @@ describe("routes with method will call handler", function() {
           url: "/api/test_path",
           payload: {foo:"bar"}
         }, function(res) {
-          expect(res.result.foo).to.eql("bar_returned");
+          expect(res.result.foo).to.equal("bar_returned");
           stop();
         });
       });
@@ -48,7 +48,7 @@ var basicallyShitWorks = function(done) {
       url: path,
       payload: {foo:"bar"}
     }, function(res) {
-      expect(res.statusCode).to.eql(200);
+      expect(res.statusCode).to.equal(200);
       stop();
     });
   });
@@ -88,8 +88,8 @@ describe("vhost configured", function() {
           'Host': 'foo.example.com'
         }
       }, function(res) {
-        expect(res.statusCode).to.eql(200);
-        expect(res.payload).to.eql("foooooo")
+        expect(res.statusCode).to.equal(200);
+        expect(res.payload).to.equal("foooooo")
         stop();
       });
     });
@@ -105,7 +105,7 @@ describe("vhost configured", function() {
           'Set-Cookie': 'mycookie=test'
         }
       }, function(res) {
-        expect(res.statusCode).to.eql(404);
+        expect(res.statusCode).to.equal(404);
         stop();
       });
     });
@@ -137,8 +137,8 @@ describe("valiation", function() {
         url: "/api/foo",
         payload: {name:5}
       }, function(res) {
-        expect(res.statusCode).to.eql(400);
-        expect(res.result.message).to.eql("child \"name\" fails because [\"name\" must be a string]");
+        expect(res.statusCode).to.equal(400);
+        expect(res.result.message).to.equal("child \"name\" fails because [\"name\" must be a string]");
         stop();
       });
     });
@@ -159,8 +159,9 @@ describe("pre", function() {
 
   var called = false;
 
-  beforeEach(function() {
+  beforeEach(function(done) {
     called = false;
+    done();
   })
 
   var preFunc = function(req, reply) {
@@ -189,7 +190,7 @@ describe("pre", function() {
         payload: {name:5}
       }, function(res) {
         if (testPre) {
-          expect(res.payload).to.eql(matcher || "foo-bar");
+          expect(res.payload).to.equal(matcher || "foo-bar");
         }
         expect(called).to.be.true;
         stop();
@@ -219,7 +220,7 @@ describe("pre", function() {
         method: "GET",
         url: "/api/foo"
       }, function(res) {
-        expect(res.payload).to.eql("barrrrrr")
+        expect(res.payload).to.equal("barrrrrr")
         stop();
       });
     });
@@ -420,7 +421,7 @@ describe("pre", function() {
           method: "GET",
           url: "/api/foo"
         }, function(res) {
-          expect(res.payload).to.eql("fooooo-barrrr")
+          expect(res.payload).to.equal("fooooo-barrrr")
           stop();
         });
       });

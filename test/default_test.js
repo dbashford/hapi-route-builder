@@ -1,7 +1,8 @@
 describe("defaults", function() {
 
-  afterEach(function() {
+  afterEach(function(done) {
     RouteBuilder.clearDefaults();
+    done();
   });
 
   describe("will be called", function() {
@@ -49,7 +50,7 @@ describe("defaults", function() {
     });
   });
 
-  it("will override existing properties if applyAtBuild", function() {
+  it("will override existing properties if applyAtBuild", function(done) {
     var def = new RBDefault(function(rb) {
       rb.path("foooo")
     }).applyAtBuild();
@@ -59,10 +60,11 @@ describe("defaults", function() {
       .path("barrr")
       .build();
 
-    expect(config.path).to.eql("foooo");
+    expect(config.path).to.equal("foooo");
+    done();
   });
 
-  it("will not override existing properties", function() {
+  it("will not override existing properties", function(done) {
     var def = new RBDefault(function(rb) {
       rb.path("foooo")
     });
@@ -72,26 +74,30 @@ describe("defaults", function() {
       .path("barrr")
       .build();
 
-    expect(config.path).to.eql("barrr");
+    expect(config.path).to.equal("barrr");
+    done();
   });
 
-  it("cannot be added directly", function() {
+  it("cannot be added directly", function(done) {
     var funct = function() {
       RouteBuilder.addDefault(function(rb) {});
     };
     expect(funct).to.throw(Error);
+    done();
   });
 
-  it("can be added as RBDefault", function() {
+  it("can be added as RBDefault", function(done) {
     RouteBuilder.addDefault(new RBDefault(function(rb) {}));
-    expect(RouteBuilder.defaultsArray.length).to.eql(1);
+    expect(RouteBuilder.defaultsArray.length).to.equal(1);
+    done();
   });
 
-  it("can be cleared", function() {
+  it("can be cleared", function(done) {
     RouteBuilder.addDefault(new RBDefault(function(rb) {}));
-    expect(RouteBuilder.defaultsArray.length).to.eql(1);
+    expect(RouteBuilder.defaultsArray.length).to.equal(1);
     RouteBuilder.clearDefaults();
-    expect(RouteBuilder.defaultsArray.length).to.eql(0);
+    expect(RouteBuilder.defaultsArray.length).to.equal(0);
+    done();
   });
 
   var withNot = function(type, called, matcher, matcher2) {
@@ -174,7 +180,7 @@ describe("defaults", function() {
       try {
         new RBDefault(function(rb) {}).not("foo");
       } catch(err) {
-        expect(err.message).to.eql("Cannot call not without first calling applyAtBuild");
+        expect(err.message).to.equal("Cannot call not without first calling applyAtBuild");
         done();
       }
     });
@@ -183,7 +189,7 @@ describe("defaults", function() {
       try {
         new RBDefault(function(rb) {}).only("foo");
       } catch(err) {
-        expect(err.message).to.eql("Cannot call only without first calling applyAtBuild");
+        expect(err.message).to.equal("Cannot call only without first calling applyAtBuild");
         done();
       }
     });
@@ -192,7 +198,7 @@ describe("defaults", function() {
       try {
         new RBDefault(function(rb) {}).applyAtBuild().not("foo").only("bar");
       } catch(err) {
-        expect(err.message).to.eql("Used only and not on same default, this is not allowed");
+        expect(err.message).to.equal("Used only and not on same default, this is not allowed");
         done();
       }
     });
@@ -201,7 +207,7 @@ describe("defaults", function() {
       try {
         new RBDefault(function(rb) {}).applyAtBuild().only("bar").not("foo");
       } catch(err) {
-        expect(err.message).to.eql("Used only and not on same default, this is not allowed");
+        expect(err.message).to.equal("Used only and not on same default, this is not allowed");
         done();
       }
     });

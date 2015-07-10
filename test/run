@@ -1,0 +1,4 @@
+#!/usr/bin/env node
+
+require('./common')
+require('../node_modules/.bin/lab');
