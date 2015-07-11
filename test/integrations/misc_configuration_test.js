@@ -89,7 +89,6 @@ describe("vhost configured", function() {
         method: 'GET',
         url: path,
         headers: {
-          'Set-Cookie': 'mycookie=test',
           'Host': 'foo.example.com'
         }
       }, function(res) {
@@ -105,12 +104,40 @@ describe("vhost configured", function() {
     new TestServer(opts).andTest(function(server, stop) {
       server.inject({
         method: 'GET',
-        url: path,
-        headers: {
-          'Set-Cookie': 'mycookie=test'
-        }
+        url: path
       }, function(res) {
         expect(res.statusCode).to.equal(404);
+        stop();
+      });
+    });
+  });
+});
+
+describe("config.app", function() {
+  it("will be passed to the route", function(done) {
+
+    var path = "/api/foo";
+
+    var appConfig = {
+      foo: "bar",
+      baz:  false
+    };
+
+    var config = new RouteBuilder()
+      .get()
+      .path(path)
+      .app(appConfig)
+      .handler(function(request, reply){
+        reply(request.route.settings.app);
+      })
+      .build();
+
+    new TestServer({routeConfig: config, done: done}).andTest(function(server, stop) {
+      server.inject({
+        method: 'GET',
+        url: path
+      }, function(res) {
+        expect(res.payload).to.equal(JSON.stringify(appConfig))
         stop();
       });
     });

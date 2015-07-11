@@ -21,3 +21,14 @@ describe("handler tests", function() {
     done();
   });
 });
+
+describe("config.app tests", function() {
+  it("will build a config.app", function(done) {
+    var appConfig = {
+      foo: "bar",
+      baz:  false
+    };
+    expect(new RouteBuilder().app(appConfig).build().config.app).to.deep.equal(appConfig);
+    done();
+  });
+});

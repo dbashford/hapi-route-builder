@@ -218,6 +218,7 @@ new RouteBuilder()
   * [path()](#path)
   * [vhost()](#vhost)
   * [handler()](#handler)
+  * [app()](#app)
   * [validatePayload()](#validatepayload)
   * [validatePayloadKey()](#validatepayloadkey)
   * [pre()](#pre)
@@ -376,6 +377,19 @@ Sets the `handler` property for a Hapi route.
 new RouteBuilder().handler(function(request, reply) {
   reply();
 });
+```
+
+#### `app`
+Sets the `config.app` property.
+
+```javascript
+
+var appConfig = {
+  foo:"bar",
+  baz: false
+};
+
+new RouteBuilder().app(appConfig).build();
 ```
 
 #### `validatePayload`

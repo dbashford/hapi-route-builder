@@ -1,17 +1,24 @@
 var RouteBuilder = require("../route_builder")
+  , utils = require("../utils")
   ;
 
-RouteBuilder.prototype.vhost = function(vhost) {
-  this.route.vhost = vhost;
+RouteBuilder.prototype.vhost = function(_vhost) {
+  this.route.vhost = _vhost;
   return this;
 };
 
-RouteBuilder.prototype.path = function(path) {
-  this.route.path = path;
+RouteBuilder.prototype.path = function(_path) {
+  this.route.path = _path;
   return this;
 };
 
-RouteBuilder.prototype.handler = function(handler) {
-  this.route.handler = handler;
+RouteBuilder.prototype.handler = function(_handler) {
+  this.route.handler = _handler;
+  return this;
+};
+
+RouteBuilder.prototype.app = function(_app) {
+  utils.ensure(this.route, "config");
+  this.route.config.app = _app;
   return this;
 };
