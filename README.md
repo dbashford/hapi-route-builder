@@ -45,20 +45,16 @@ Here is a simple POST route which creates a `bar` resource.  It includes some va
 ### After
 
 ```javascript
-var config =
-  new RouteBuilder()
-    .post()
-    .path("/foo/{foo_id}/bar/{bar_id}/")
-    .handler(handle)
-    .validatePayloadKey("keywords", validateKeywords)
-    .preParallel(["userData", shared.loadUserData], ["contextData", shared.loadFooData])
-    .preSerial(shared.authorizeForCreate)
-    .build()
-
+var config = new RouteBuilder()
+  .post("/foo/{foo_id}/bar/{bar_id}/", handle)
+  .validatePayloadKey("keywords", validateKeywords)
+  .preParallel(["userData", shared.loadUserData], ["contextData", shared.loadFooData])
+  .preSerial(shared.authorizeForCreate)
+  .build()
 server.route(config);
 ```
 
-This cuts 24 lines down to 10 (with a few extra lines tossed in for readability), while making some of what Hapi is doing more clear, rather than implied via the object structure.  For instance, `preParallel`, which takes n Arrays as input, executes each of the items it is passed in parallel.
+This cuts 24 lines down to 7, while making some of what Hapi is doing more clear, rather than implied via the object structure.  For instance, `preParallel`, which takes n Arrays as input, executes each of the items it is passed in parallel.
 
 ### With Defaults
 
