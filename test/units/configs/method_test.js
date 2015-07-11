@@ -7,10 +7,6 @@ describe("method tests", function() {
       done();
     });
 
-    it("will throw error if bad method used", function(done) {
-      expect(function(){ new RouteBuilder().method("FOO").build() }).to.throw(Error);
-      done();
-    })
   });
 
   describe("utility functions", function(){

@@ -1,11 +1,7 @@
 var RouteBuilder = require("../route_builder")
-  , acceptableMethods = ["PUT", "POST", "DELETE", "GET", "OPTIONS", "PATCH"] 
   ;
 
 RouteBuilder.prototype.method = function(method) {
-  if (acceptableMethods.indexOf(method) === -1) {
-    throw new Error("Unacceptable method used", method);
-  }
   this.route.method = method;
   return this;
 };
