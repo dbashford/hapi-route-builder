@@ -7,9 +7,16 @@ RouteBuilder.prototype.method = function(method) {
 };
 
 var methods = ["post", "get", "delete", "put", "patch", "options"];
-
 methods.forEach(function(_method) {
-  RouteBuilder.prototype[_method] = function() {
+  RouteBuilder.prototype[_method] = function(_path, _handler) {
+    if (_path) {
+      this.path(_path);
+    }
+
+    if (_handler) {
+      this.handler(_handler);
+    }
+
     this.method(_method.toUpperCase());
     return this;
   };

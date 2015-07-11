@@ -321,11 +321,29 @@ Expresses a route is a POST.
 new RouteBuilder().post()
 ```
 
+The `post` function can also take the `path` and a `handler` as 1st and 2nd arguments.  Both arguments do not need to be provided.
+
+```javascript
+new RouteBuilder()
+  .post("/api/foo", function(request, reply) {
+    reply("foo")
+  })
+```
+
 #### `get`
 Expresses a route is a GET.
 
 ```javascript
 new RouteBuilder().get()
+```
+
+The `get` function can also take the `path` and a `handler` as 1st and 2nd arguments.  Both arguments do not need to be provided.
+
+```javascript
+new RouteBuilder()
+  .get("/api/foo", function(request, reply) {
+    reply("foo")
+  })
 ```
 
 #### `put`
@@ -335,11 +353,29 @@ Expresses a route is a PUT.
 new RouteBuilder().put()
 ```
 
+The `put` function can also take the `path` and a `handler` as 1st and 2nd arguments.  Both arguments do not need to be provided.
+
+```javascript
+new RouteBuilder()
+  .put("/api/foo", function(request, reply) {
+    reply("foo")
+  })
+```
+
 #### `delete`
 Expresses a route is a DELETE.
 
 ```javascript
 new RouteBuilder().delete()
+```
+
+The `delete` function can also take the `path` and a `handler` as 1st and 2nd arguments.  Both arguments do not need to be provided.
+
+```javascript
+new RouteBuilder()
+  .delete("/api/foo", function(request, reply) {
+    reply("foo")
+  })
 ```
 
 #### `patch`
@@ -349,11 +385,29 @@ Expresses a route is a PATCH.
 new RouteBuilder().patch()
 ```
 
+The `patch` function can also take the `path` and a `handler` as 1st and 2nd arguments.  Both arguments do not need to be provided.
+
+```javascript
+new RouteBuilder()
+  .patch("/api/foo", function(request, reply) {
+    reply("foo")
+  })
+```
+
 #### `options`
 Expresses a route is an OPTIONS.
 
 ```javascript
 new RouteBuilder().options()
+```
+
+The `options` function can also take the `path` and a `handler` as 1st and 2nd arguments.  Both arguments do not need to be provided.
+
+```javascript
+new RouteBuilder()
+  .options("/api/foo", function(request, reply) {
+    reply("foo")
+  })
 ```
 
 #### `path`
