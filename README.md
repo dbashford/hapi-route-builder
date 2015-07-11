@@ -215,8 +215,8 @@ new RouteBuilder()
   * [path()](#path)
   * [post()](#post)
   * [pre()](#pre)
-  * [preSerial()](#preserial)
   * [preParallel()](#preparallel)
+  * [preSerial()](#preserial)
   * [put()](#put)
   * [replace()](#replace)
   * [validatePayload()](#validatepayload)
@@ -285,15 +285,6 @@ new RouteBuilder()
 
 #### `cache`
 
-#### `handler`
-Sets the `handler` property for a Hapi route.
-
-```javascript
-new RouteBuilder().handler(function(request, reply) {
-  reply();
-});
-```
-
 #### `delete`
 Expresses a route is a DELETE.
 
@@ -324,6 +315,15 @@ new RouteBuilder()
   .get("/api/foo", function(request, reply) {
     reply("foo")
   })
+```
+
+#### `handler`
+Sets the `handler` property for a Hapi route.
+
+```javascript
+new RouteBuilder().handler(function(request, reply) {
+  reply();
+});
 ```
 
 #### `method`
@@ -409,6 +409,32 @@ var pre = [
 new RouteBuilder().pre(pre);
 ```
 
+#### `preParallel`
+`preParallel` works like `preSerial` except it takes multiple arrays of `preSerial` inputs. Each array represents a `pre` to execute in parallel with the other arrays of inputs.
+
+```javascript
+new RouteBuilder()
+  .preParallel(
+    ["foo", fooFunc],
+    ["bar", barFunc]
+  )
+  .preSerial("baz", bazFunc)
+```
+
+The above would execute `fooFunc` and `barFunc` in parallel, and after both are finished, execute `bazFunc`.
+
+All the `preSerial` input variations are honored, including using an `index` integer.
+
+```javascript
+new RouteBuilder()
+  .preSerial("baz", bazFunc)
+  .preParallel(
+    0,
+    ["foo", fooFunc],
+    ["bar", barFunc]
+  )
+```
+
 #### `preSerial`
 Hapi's `pre` configuration is an array. `preSerial` pushes a new entry to that array.  `preSerial` can be called multiple times, adding more entries to the `pre` array.
 
@@ -438,32 +464,6 @@ new RouteBuilder()
 ```
 
 Add `0` in the example above would, in this case, reverse the order of the two `preSerial`s.
-
-#### `preParallel`
-`preParallel` works like `preSerial` except it takes multiple arrays of `preSerial` inputs. Each array represents a `pre` to execute in parallel with the other arrays of inputs.
-
-```javascript
-new RouteBuilder()
-  .preParallel(
-    ["foo", fooFunc],
-    ["bar", barFunc]
-  )
-  .preSerial("baz", bazFunc)
-```
-
-The above would execute `fooFunc` and `barFunc` in parallel, and after both are finished, execute `bazFunc`.
-
-All the `preSerial` input variations are honored, including using an `index` integer.
-
-```javascript
-new RouteBuilder()
-  .preSerial("baz", bazFunc)
-  .preParallel(
-    0,
-    ["foo", fooFunc],
-    ["bar", barFunc]
-  )
-```
 
 #### `put`
 Expresses a route is a PUT.
