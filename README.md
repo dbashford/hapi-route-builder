@@ -284,6 +284,50 @@ new RouteBuilder()
 ```
 
 #### `cache`
+Configures the `config.cache` parameter. `cache` can take 3 different parameter types.
+
+1. It can take the full `cache` configuration object as a parameter.
+
+```javascript
+new RouteBuilder().cache({
+  privacy: "private",
+  expiresIn: 1000 * 60 * 60
+});
+```
+
+2. It can take a string in the form `HH:MM`, which sets the cache `privacy` to default and `expiresAt` to the value provided.
+
+```javascript
+new RouteBuilder().cache("12:00");
+```
+
+3. It can take a number of milliseconds until the cache is invalidated.  The `expiresIn` setting.
+
+```javascript
+new RouteBuilder().cache(1000 * 60 * 60);
+```
+
+#### `cachePrivate`
+Configures cache with the `privacy` setting set to `private`. Takes one parameter, either `expiresIn` or `expiresAt`.  `expiresIn` is a number expressed in millis, `expiresAt` is a string in `HH:MM` format.
+
+```javascript
+new RouteBuilder().cachePrivate(1000 * 60 * 60);
+```
+
+```javascript
+new RouteBuilder().cachePrivate("12:00");
+```
+
+#### `cachePublic`
+Configures cache with the `privacy` setting set to `public`. Takes one parameter, either `expiresIn` or `expiresAt`.  `expiresIn` is a number expressed in millis, `expiresAt` is a string in `HH:MM` format.
+
+```javascript
+new RouteBuilder().cachePublic(1000 * 60 * 60);
+```
+
+```javascript
+new RouteBuilder().cachePublic("12:00");
+```
 
 #### `delete`
 Expresses a route is a DELETE.

@@ -39,13 +39,17 @@ exports.isExcluded = exports.isIncluded = function(path, items) {
 };
 
 exports.isFunction = function(f) {
-  return typeof(f) === "function";
+  return typeof f === "function";
 };
 
 exports.isObject = function(o) {
-  return o !== null && typeof o === 'object' && !Array.isArray(o);
+  return o !== null && typeof(o) === 'object' && !Array.isArray(o);
 };
 
 exports.isString = function(s) {
-  return typeof s === 'string';
+  return typeof(s) === 'string';
+};
+
+exports.isNumber = function(n) {
+  return typeof(n) === "number";
 };
