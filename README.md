@@ -206,6 +206,8 @@ new RouteBuilder()
   * [app()](#app)
   * [build()](#build)
   * [cache()](#cache)
+  * [cachePrivate()](#cacheprivate)
+  * [cachePublic()](#cachepublic)
   * [delete()](#delete)
   * [get()](#get)
   * [handler()](#handler)
@@ -295,13 +297,13 @@ new RouteBuilder().cache({
 });
 ```
 
-2. It can take a string in the form `HH:MM`, which sets the cache `privacy` to default and `expiresAt` to the value provided.
+2. It can take a string in the form `HH:MM`, which sets the cache `privacy` to `default` and `expiresAt` to the value provided.
 
 ```javascript
 new RouteBuilder().cache("12:00");
 ```
 
-3. It can take a number of milliseconds until the cache is invalidated.  The `expiresIn` setting.
+3. It can take a number of milliseconds until the cache is invalidated.  The `expiresIn` setting.  This also uses the `default` `privacy`.
 
 ```javascript
 new RouteBuilder().cache(1000 * 60 * 60);
