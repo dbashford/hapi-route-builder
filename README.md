@@ -66,7 +66,7 @@ var def = new RBDefault(function(rb) {
     .preSerial(shared.authorizeForCreate)
   })
   .applyAtBuild()
-  .only("/foo/{foo_id}/bar");
+  .only("/foo/{foo_id}/bar/");
 
 RouteBuilder.addDefault(def);
 ```
@@ -76,9 +76,7 @@ Now the route config for all the `/foo/{foo_id}/bar` routes need not create that
 ```javascript
 var config =
   new RouteBuilder()
-    .post()
-    .path("/foo/{foo_id}/bar/{bar_id}/")
-    .handler(handle)
+    .post("/foo/{foo_id}/bar/", handle)
     .validatePayloadKey("keywords", validateKeywords)
     .build()
 
