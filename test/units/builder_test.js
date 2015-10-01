@@ -4,6 +4,23 @@ describe("building config", function() {
     done();
   });
 
+  it("uses the rootPath", function(done) {
+    RouteBuilder.setRootPath("/api");
+    var config1 = new RouteBuilder()
+      .path("/foo")
+      .build();
+
+    RouteBuilder.setRootPath(undefined);
+
+    var config2 = new RouteBuilder()
+      .path("/foo")
+      .build();
+
+    expect(config1.path).to.equal("/api/foo");
+    expect(config2.path).to.equal("/foo");
+    done();
+  });
+
   it("applies defaults", function(done) {
     RouteBuilder.addDefault(new RBDefault(function(rb) {
       // will time out if not called

@@ -201,6 +201,7 @@ new RouteBuilder()
   * [new RouteBuilder()](#constructor)
   * [RouteBuilder.addDefault()](#routebuilderadddefault)
   * [RouteBuilder.clearDefaults()](#routebuildercleardefaults)
+  * [RouteBuilder.setRootPath()](#routebuildersetdefaultpath)
   * [app()](#app)
   * [build()](#build)
   * [cache()](#cache)
@@ -255,6 +256,19 @@ This function is handy for clearing defaults after creating a group of routes, p
 
 ```javascript
 RouteBuilder.clearDefaults();
+```
+
+#### `RouteBuilder.setRootPath`
+This static function sets a root path for all paths created after `setRootPath` is called.  So if `path('/profile')` is called on a RouteBuilder after `setRootPath('/api')` is called, then the resulting route path would be `/api/profile`.
+
+To clear the root path, simply call `setRootPath` with no parameters.
+
+```javascript
+RouteBuilder.setRootPath("/api");
+
+... build a route
+
+RouteBuilder.setRootPath();
 ```
 
 #### `app`

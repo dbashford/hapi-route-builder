@@ -10,6 +10,12 @@ function RouteBuilder() {
   this._applyDefaults(false);
 }
 
+RouteBuilder._rootPath = undefined;
+
+RouteBuilder.setRootPath = function(rootPath) {
+  RouteBuilder._rootPath = rootPath;
+};
+
 RouteBuilder.defaultsArray = [];
 
 /**

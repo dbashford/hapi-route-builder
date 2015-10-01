@@ -8,7 +8,7 @@ RouteBuilder.prototype.vhost = function(_vhost) {
 };
 
 RouteBuilder.prototype.path = function(_path) {
-  this.route.path = _path;
+  this.route.path = (RouteBuilder._rootPath || "") + _path;
   return this;
 };
 

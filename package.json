@@ -1,6 +1,6 @@
 {
   "name": "hapi-route-builder",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "homepage": "https://github.com/dbashford/hapi-route-builder",
   "author": "David Bashford",
   "description": "A fluid/builder pattern approach to building Hapi routes.",
@@ -25,7 +25,7 @@
   },
   "devDependencies": {
     "coveralls": "^2.11.2",
-    "hapi": "8.6.1",
+    "hapi": "10.1.0",
     "joi": "6.4.3",
     "lab": "5.13.0",
     "code": "1.4.1"
